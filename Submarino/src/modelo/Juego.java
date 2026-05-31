@@ -1,5 +1,6 @@
 package modelo;
 
+// Estado de la partida: nivel, jugador y serie de barcos actual.
 public class Juego {
 
     private int nivelActual;

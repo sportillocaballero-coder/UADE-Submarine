@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Submarino",
+            "request": "launch",
+            "mainClass": "test.Test",
+            "classPaths": ["${workspaceFolder}/bin"],
+            "sourcePaths": ["${workspaceFolder}/src"]
+        }
+    ]
+}

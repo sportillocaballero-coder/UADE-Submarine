@@ -6,6 +6,7 @@ import modelo.Juego;
 import modelo.SerieDeBarcos;
 import modelo.Submarino;
 
+// Controlador del juego: coordina barcos, cargas, colisiones y niveles.
 public class ControladorJuego {
 
     private Juego juego;
@@ -20,6 +21,7 @@ public class ControladorJuego {
         juego.moverSubmarino(accion, valor);
     }
 
+    // Un ciclo del juego: mueve barcos, cae cargas, chequea colisiones y nivel.
     public void ejecutarCiclo() {
         ciclos++;
 
@@ -49,6 +51,7 @@ public class ControladorJuego {
         evaluarFinDeJuego();
     }
 
+    // Si una carga toca el sub (< 30 px), le hace daño y explota.
     public void verificarColisiones() {
         Submarino sub = juego.getJugadorActual().getSubmarino();
         for (Barco b : juego.getSerieActual().getBarcosActivos()) {

@@ -20,6 +20,7 @@ import modelo.Jugador;
 import modelo.Juego;
 import modelo.Submarino;
 
+// Ventana principal del juego. Captura teclas y ejecuta el game-loop a 30 ms.
 public class Ventana extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -63,6 +64,7 @@ public class Ventana extends JFrame {
         this.setVisible(true);
     }
 
+    // Panel que dibuja todos los elementos del juego en cada repaint.
     class PanelJuego extends JPanel {
 
         private static final long serialVersionUID = 1L;
@@ -124,14 +126,14 @@ public class Ventana extends JFrame {
             g.setFont(new Font("Arial", Font.BOLD, 11));
             g.drawString("SUB", sx + 32, sy + 18);
 
-            // Barra de vida del submarino
+            // Barra de vida (verde si > 50 %, roja si no)
             int vida = sub.getVidaActual();
             g.setColor(Color.DARK_GRAY);
             g.fillRect(sx, sy + 32, 90, 6);
             g.setColor(vida > 50 ? Color.GREEN : Color.RED);
             g.fillRect(sx, sy + 32, vida * 90 / 100, 6);
 
-            // HUD
+            // HUD: vidas, puntaje y nivel
             Jugador jugador = juego.getJugadorActual();
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 15));

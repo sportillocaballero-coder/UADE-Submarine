@@ -1,5 +1,6 @@
 package modelo;
 
+// Proyectil que cae verticalmente desde un barco enemigo.
 public class CargaProfundidad {
 
     private Punto posicion;
@@ -7,6 +8,7 @@ public class CargaProfundidad {
     private double profundidadDetonacion;
     private boolean explotada;
 
+    // Explota automáticamente al llegar a y = 560.
     public CargaProfundidad(Punto inicio, double velocidadCaida) {
         this.posicion = inicio;
         this.velocidad = velocidadCaida;

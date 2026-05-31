@@ -3,11 +3,12 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+// Maneja la oleada de barcos enemigos de un nivel.
 public class SerieDeBarcos {
 
     private List<Barco> barcosActivos;
-    private int barcosGenerados;
     private int max;
+    private int barcosGenerados;
     private int totalBarcos;
 
     public SerieDeBarcos(int cantMax) {
@@ -17,6 +18,7 @@ public class SerieDeBarcos {
         this.barcosActivos = new ArrayList<>();
     }
 
+    // Genera un barco fuera del borde izquierdo en posición aleatoria.
     public void generarBarco() {
         if (puedeLanzarNuevoBarco()) {
             double offsetX = -(Math.random() * 300 + 80);
@@ -30,6 +32,7 @@ public class SerieDeBarcos {
         barcosActivos.removeIf(b -> !b.isActivo());
     }
 
+    // La serie termina cuando se generaron todos los barcos y ninguno sigue activo.
     public boolean serieFinalizada() {
         return barcosGenerados >= totalBarcos && barcosActivos.isEmpty();
     }

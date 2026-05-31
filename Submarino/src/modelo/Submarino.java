@@ -1,11 +1,13 @@
 package modelo;
 
+// Submarino del jugador. Recibe daño de las cargas enemigas.
 public class Submarino {
 
     private int vidaActual;
     private boolean activo;
     private Punto posicion;
 
+    // Comienza con 100 de vida.
     public Submarino(Punto inicio) {
         this.posicion = inicio;
         this.vidaActual = 100;
@@ -20,6 +22,7 @@ public class Submarino {
         posicion.mover(0, metro);
     }
 
+    // El daño es un porcentaje de la vida actual.
     public void recibirDanio(double porcentaje) {
         vidaActual -= (int) (vidaActual * porcentaje / 100.0);
         if (vidaActual <= 0) {
