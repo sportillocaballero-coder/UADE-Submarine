@@ -13,24 +13,38 @@ public class Barco {
     private String direccion;
     private List<CargaProfundidad> cargas;
 
-    public Barco(Punto inicio, double velocidad) {
+    /**
+     * @param inicio     posición inicial (fuera del borde según dirección)
+     * @param velocidad  píxeles por ciclo que avanza
+     * @param direccion  "derecha" (izq→der) o "izquierda" (der→izq)
+     */
+    public Barco(Punto inicio, double velocidad, String direccion) {
         this.posicion = inicio;
         this.velocidad = velocidad;
         this.activo = true;
         this.cooldownDisparo = 0;
-        this.direccion = "derecha";
+        this.direccion = direccion;
         this.cargas = new ArrayList<>();
     }
 
-    public void mover(double deltaX, double deltaY) {
-        posicion.mover(deltaX, deltaY);
+    /** Avanza el barco en su dirección a su propia velocidad. */
+    public void avanzar() {
+        if (direccion.equals("derecha")) {
+            posicion.mover(velocidad, 0);
+        } else {
+            posicion.mover(-velocidad, 0);
+        }
     }
 
     public void actualizar() {
         if (cooldownDisparo > 0) {
             cooldownDisparo--;
         }
-        if (posicion.getX() > 900) {
+        // Se desactiva al salir por el lado contrario al que entró
+        boolean salio = direccion.equals("derecha")
+                ? posicion.getX() > 900
+                : posicion.getX() < -80;
+        if (salio) {
             activo = false;
         }
     }
@@ -39,7 +53,7 @@ public class Barco {
         return cooldownDisparo <= 0;
     }
 
-    // Cooldown de 120 ciclos entre disparos (~3,6 s).
+    // Cooldown de 120 ciclos entre disparos (~3,6 s a 30 fps).
     public CargaProfundidad lanzarCarga() {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posicion.getX() + 40, posicion.getY() + 30), 3.0
@@ -55,6 +69,14 @@ public class Barco {
 
     public Punto getPosicion() {
         return posicion;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public double getVelocidad() {
+        return velocidad;
     }
 
     public List<CargaProfundidad> getCargas() {

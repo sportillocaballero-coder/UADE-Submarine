@@ -22,9 +22,9 @@ public class Submarino {
         posicion.mover(0, metro);
     }
 
-    // El daño es un porcentaje de la vida actual.
-    public void recibirDanio(double porcentaje) {
-        vidaActual -= (int) (vidaActual * porcentaje / 100.0);
+    // El daño es una cantidad fija de puntos (sobre 100 de vida máxima).
+    public void recibirDanio(int puntos) {
+        vidaActual -= puntos;
         if (vidaActual <= 0) {
             vidaActual = 0;
             activo = false;

@@ -9,13 +9,19 @@ public class Juego {
     private Jugador jugadorActual;
     private SerieDeBarcos serieActual;
 
+    // Límites del área jugable: pantalla 900×600, agua desde y=85.
+    private static final double X_MIN = 0;
+    private static final double X_MAX = 810;  // 900 - ancho del submarino (90)
+    private static final double Y_MIN = 85;   // justo bajo la línea del mar
+    private static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
+
     public Juego(String nombreJugador) {
         this.nivelActual = 1;
         this.mejorPuntaje = 0;
         this.activo = true;
         this.jugadorActual = new Jugador(nombreJugador);
         jugadorActual.setSubmarino(new Submarino(new Punto(400, 350)));
-        this.serieActual = new SerieDeBarcos(nivelActual * 3);
+        this.serieActual = new SerieDeBarcos(12, 3, calcularVelocidad(), generarDireccion());
     }
 
     public void actualizarJuego() {
@@ -24,7 +30,7 @@ public class Juego {
 
     public void subirNivel() {
         nivelActual++;
-        serieActual = new SerieDeBarcos(nivelActual * 3);
+        serieActual = new SerieDeBarcos(12, 3, calcularVelocidad(), generarDireccion());
     }
 
     public void cerrarJuego() {
@@ -58,5 +64,22 @@ public class Juego {
             case "arriba":    sub.mover(0, -valor);  break;
             case "abajo":     sub.mover(0, valor);   break;
         }
+        // Corregir si salió de los límites del área de agua
+        Punto pos = sub.getPosicion();
+        double cx = Math.max(X_MIN, Math.min(pos.getX(), X_MAX)) - pos.getX();
+        double cy = Math.max(Y_MIN, Math.min(pos.getY(), Y_MAX)) - pos.getY();
+        if (cx != 0 || cy != 0) {
+            sub.mover(cx, cy);
+        }
+    }
+
+    // Velocidad base 2 px/ciclo, +20% acumulado por cada nivel.
+    private double calcularVelocidad() {
+        return 2.0 * Math.pow(1.2, nivelActual - 1);
+    }
+
+    // Dirección aleatoria para cada nueva serie.
+    private String generarDireccion() {
+        return Math.random() < 0.5 ? "derecha" : "izquierda";
     }
 }

@@ -7,22 +7,37 @@ import java.util.List;
 public class SerieDeBarcos {
 
     private List<Barco> barcosActivos;
-    private int max;
+    private int max;            // máximo de barcos simultáneos en pantalla
     private int barcosGenerados;
-    private int totalBarcos;
+    private int totalBarcos;    // total de barcos en la serie
+    private double velocidad;
+    private String direccion;   // "derecha" o "izquierda"
 
-    public SerieDeBarcos(int cantMax) {
-        this.max = cantMax;
-        this.totalBarcos = cantMax;
+    /**
+     * @param total         barcos totales de la serie (siempre 12)
+     * @param maxSimultaneo máximo en pantalla al mismo tiempo (siempre 3)
+     * @param velocidad     píxeles por ciclo que avanza cada barco
+     * @param direccion     "derecha" (izq→der) o "izquierda" (der→izq)
+     */
+    public SerieDeBarcos(int total, int maxSimultaneo, double velocidad, String direccion) {
+        this.totalBarcos = total;
+        this.max = maxSimultaneo;
         this.barcosGenerados = 0;
         this.barcosActivos = new ArrayList<>();
+        this.velocidad = velocidad;
+        this.direccion = direccion;
     }
 
-    // Genera un barco fuera del borde izquierdo en posición aleatoria.
+    // Genera un barco fuera del borde correspondiente según la dirección.
     public void generarBarco() {
         if (puedeLanzarNuevoBarco()) {
-            double offsetX = -(Math.random() * 300 + 80);
-            Barco nuevo = new Barco(new Punto(offsetX, 30), 2.0);
+            double x;
+            if (direccion.equals("derecha")) {
+                x = -(Math.random() * 300 + 80);   // fuera del borde izquierdo
+            } else {
+                x = 900 + Math.random() * 300 + 80; // fuera del borde derecho
+            }
+            Barco nuevo = new Barco(new Punto(x, 30), velocidad, direccion);
             barcosActivos.add(nuevo);
             barcosGenerados++;
         }

@@ -7,12 +7,15 @@ public class Jugador {
     private int puntaje;
     private int vidas;
     private Submarino sub;
+    // Último umbral de 500 puntos por el que ya se otorgó una vida extra.
+    private int puntajeUltimaVida;
 
     // Empieza con 0 puntos y 3 vidas.
     public Jugador(String nombre) {
         this.nombreClave = nombre;
         this.puntaje = 0;
         this.vidas = 3;
+        this.puntajeUltimaVida = 0;
     }
 
     public String getNombreClave() {
@@ -31,11 +34,19 @@ public class Jugador {
         this.sub = sub;
     }
 
-    // Otorga una vida extra cada 1000 puntos exactos.
-    public void verificaVidaExtra() {
-        if (puntaje > 0 && puntaje % 1000 == 0) {
+    /**
+     * Otorga una vida extra por cada 500 puntos alcanzados.
+     * Usa un umbral acumulativo para no perderse saltos de puntuación.
+     * Devuelve true si se otorgó al menos una vida.
+     */
+    public boolean verificaVidaExtra() {
+        boolean gano = false;
+        while (puntaje >= puntajeUltimaVida + 500) {
+            puntajeUltimaVida += 500;
             vidas++;
+            gano = true;
         }
+        return gano;
     }
 
     public void perderVida() {

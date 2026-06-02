@@ -101,15 +101,31 @@ public class Ventana extends JFrame {
                 g.setFont(new Font("Arial", Font.BOLD, 11));
                 g.drawString("BARCO", bx + 15, by + 22);
 
-                // Cargas de profundidad
+                // Cargas de profundidad y explosiones
                 for (CargaProfundidad c : b.getCargas()) {
+                    int cx = (int) c.getPosicion().getX();
+                    int cy = (int) c.getPosicion().getY();
                     if (!c.estaExplotada()) {
-                        int cx = (int) c.getPosicion().getX();
-                        int cy = (int) c.getPosicion().getY();
+                        // Carga cayendo
                         g.setColor(new Color(200, 50, 50));
                         g.fillOval(cx - 8, cy - 8, 16, 16);
                         g.setColor(Color.YELLOW);
                         g.drawOval(cx - 8, cy - 8, 16, 16);
+                    } else if (c.estaExplotando()) {
+                        // Animación de explosión: crece y se desvanece
+                        int t = c.getTiempoExplosion();       // 25 → 1
+                        int r = (26 - t) * 3;                 // radio 3 → 75
+                        int alpha = Math.min(255, t * 10);    // opacidad 250 → 10
+                        // Cuerpo naranja
+                        g.setColor(new Color(255, 120, 0, alpha));
+                        g.fillOval(cx - r, cy - r, r * 2, r * 2);
+                        // Anillo amarillo
+                        g.setColor(new Color(255, 255, 0, alpha));
+                        g.drawOval(cx - r, cy - r, r * 2, r * 2);
+                        // Núcleo blanco
+                        int rc = Math.max(1, r / 3);
+                        g.setColor(new Color(255, 255, 255, alpha));
+                        g.fillOval(cx - rc, cy - rc, rc * 2, rc * 2);
                     }
                 }
             }

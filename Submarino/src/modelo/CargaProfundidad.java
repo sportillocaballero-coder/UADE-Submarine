@@ -7,6 +7,8 @@ public class CargaProfundidad {
     private double velocidad;
     private double profundidadDetonacion;
     private boolean explotada;
+    // Ciclos restantes de animación de explosión (25 → 0).
+    private int tiempoExplosion;
 
     // Explota automáticamente al llegar a y = 560.
     public CargaProfundidad(Punto inicio, double velocidadCaida) {
@@ -14,6 +16,7 @@ public class CargaProfundidad {
         this.velocidad = velocidadCaida;
         this.profundidadDetonacion = 560;
         this.explotada = false;
+        this.tiempoExplosion = 0;
     }
 
     public Punto getPosicion() {
@@ -26,7 +29,7 @@ public class CargaProfundidad {
 
     public boolean explotar() {
         if (posicion.getY() >= profundidadDetonacion) {
-            explotada = true;
+            forzarExplosion();
         }
         return explotada;
     }
@@ -37,7 +40,31 @@ public class CargaProfundidad {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    // Marca la carga como explotada e inicia la animación de 25 frames.
+    public void forzarExplosion() {
+        if (!explotada) {
+            explotada = true;
+            tiempoExplosion = 25;
+        }
+    }
+
+    // Descuenta un frame de la animación de explosión.
+    public void actualizarExplosion() {
+        if (tiempoExplosion > 0) {
+            tiempoExplosion--;
+        }
+    }
+
     public boolean estaExplotada() {
         return explotada;
+    }
+
+    // True mientras la animación de explosión siga visible.
+    public boolean estaExplotando() {
+        return tiempoExplosion > 0;
+    }
+
+    public int getTiempoExplosion() {
+        return tiempoExplosion;
     }
 }
