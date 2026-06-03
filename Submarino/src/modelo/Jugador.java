@@ -1,6 +1,6 @@
 package modelo;
 
-// Jugador humano: nombre, puntaje, vidas y su submarino.
+// Nosotros como jugadores
 public class Jugador {
 
     private String nombreClave;
@@ -10,7 +10,7 @@ public class Jugador {
     // Último umbral de 500 puntos por el que ya se otorgó una vida extra.
     private int puntajeUltimaVida;
 
-    // Empieza con 0 puntos y 3 vidas.
+    // Iniciliaza con 0 puntos y 3 vids
     public Jugador(String nombre) {
         this.nombreClave = nombre;
         this.puntaje = 0;
@@ -35,7 +35,7 @@ public class Jugador {
     }
 
     /**
-     * Otorga una vida extra por cada 500 puntos alcanzados.
+     * Otorga una vida extra por cada 500 puntos alcanzados
      * Usa un umbral acumulativo para no perderse saltos de puntuación.
      * Devuelve true si se otorgó al menos una vida.
      */

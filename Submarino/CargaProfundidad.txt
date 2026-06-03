@@ -1,0 +1,136 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: CargaProfundidad
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Representa el proyectil que lanza cada barco enemigo.
+  Cae verticalmente desde la posicion del barco hacia
+  el fondo. Puede explotar de dos formas: automaticamente
+  al alcanzar una profundidad fija (y=560), o forzada
+  desde afuera cuando cruza la profundidad del submarino.
+  Una vez explotada reproduce una animacion de 25 frames.
+  Tambien calcula el danio que causa al submarino segun
+  la distancia a la que explota.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - posicion : Punto
+      Posicion actual de la carga en pantalla (x, y).
+      Se actualiza cada ciclo en caer().
+
+  - velocidad : double
+      Pixeles que baja la carga por ciclo. Se recibe
+      en el constructor como "velocidadCaida".
+      En el juego se crea siempre con valor 3.0.
+
+  - profundidadDetonacion : double
+      Coordenada Y en la que la carga explota
+      automaticamente si nadie la detono antes.
+      Se fija en 560 en el constructor (fondo del area
+      de agua).
+
+  - explotada : boolean
+      Indica si la carga ya exploto. Una vez true no
+      puede volver a false ni puede explotar dos veces.
+      Lo protege la condicion "if (!explotada)" dentro
+      de forzarExplosion().
+
+  - tiempoExplosion : int
+      Contador de frames de la animacion de explosion.
+      Empieza en 0. Al explotar se pone en 25 y baja
+      1 por ciclo en actualizarExplosion(). Cuando
+      llega a 0 la animacion termino.
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + CargaProfundidad(inicio: Punto, velocidadCaida: double)
+      Constructor. Guarda posicion y velocidad. Fija
+      profundidadDetonacion en 560, explotada en false
+      y tiempoExplosion en 0.
+
+  + getPosicion() : Punto
+      Getter de posicion.
+
+  + caer() : void
+      Mueve la carga hacia abajo sumando "velocidad" al
+      eje Y. Se llama una vez por ciclo desde el
+      ControladorJuego.
+
+  + explotar() : boolean
+      Verifica si la carga llego o supero profundidadDetonacion
+      (y >= 560). Si es asi llama a forzarExplosion().
+      Devuelve el valor actual de "explotada" en ambos
+      casos.
+
+  + forzarExplosion() : void
+      Marca explotada = true y arranca la animacion
+      poniendo tiempoExplosion = 25. Solo actua si
+      todavia no habia explotado (evita doble explosion).
+
+  + calcularDistancia(sub: Submarino) : double
+      Calcula la distancia euclidiana entre la posicion
+      de la carga y la posicion del submarino usando
+      Pitagoras: sqrt(dx^2 + dy^2).
+
+  + estaExplotada() : boolean
+      Getter de explotada. Devuelve true si la carga
+      ya detono.
+
+  + actualizarExplosion() : void
+      Reduce tiempoExplosion en 1 si es mayor que 0.
+      Avanza la animacion frame a frame.
+
+  + estaExplotando() : boolean   [NO figura en el diagrama]
+      Devuelve true si tiempoExplosion > 0, es decir,
+      si la animacion de explosion todavia esta activa.
+      Ver nota al final.
+
+  + getTiempoExplosion() : int
+      Getter de tiempoExplosion.
+
+  + getVelocidad() : double
+      Getter de velocidad.
+
+  + calcularDanio(sub: Submarino) : int
+      Calcula el danio segun la distancia al submarino:
+        - dist > 100 px  ->  0  (sin danio, suma 30 pts)
+        - dist 50-100 px -> 30  (danio leve, suma 10 pts)
+        - dist 10-50 px  -> 50  (danio fuerte)
+        - dist <= 10 px  -> -1  (colision directa, muerte)
+      Internamente llama a calcularDistancia(sub).
+      El ControladorJuego interpreta estos valores para
+      aplicar los efectos al jugador.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. El diagrama lista "estaExplotado()" (con 'd' al final).
+     En el codigo existen DOS metodos distintos:
+       - estaExplotada() : boolean  -> getter de "explotada"
+                                       (la carga ya detono)
+       - estaExplotando() : boolean -> true mientras la
+                                       animacion sigue activa
+     El diagrama solo muestra uno de los dos y ademas
+     tiene un typo ("estaExplotado" en lugar de
+     "estaExplotada"). Hay que agregar estaExplotando()
+     al diagrama y corregir el nombre.
+
+  2. Todos los atributos del diagrama estan presentes y
+     correctos en el codigo. No falta ninguno.
+
+  3. Todos los demas metodos del diagrama estan
+     implementados correctamente en el codigo.
+
+========================================================
+FIN DE LA GUIA - CargaProfundidad
+========================================================

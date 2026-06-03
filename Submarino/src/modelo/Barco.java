@@ -3,7 +3,8 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
-// Barco enemigo que cruza la pantalla lanzando cargas de profundidad.
+// El barco enemigo cruza la pantalla lanzando las cargas
+
 public class Barco {
 
     private boolean activo;
@@ -14,9 +15,9 @@ public class Barco {
     private List<CargaProfundidad> cargas;
 
     /**
-     * @param inicio     posición inicial (fuera del borde según dirección)
+     * @param inicio     posición inicial (fuera del borde )
      * @param velocidad  píxeles por ciclo que avanza
-     * @param direccion  "derecha" (izq→der) o "izquierda" (der→izq)
+     * @param direccion  "derecha" (izq > der) o "izquierda" (der > izq)
      */
     public Barco(Punto inicio, double velocidad, String direccion) {
         this.posicion = inicio;
@@ -53,7 +54,7 @@ public class Barco {
         return cooldownDisparo <= 0;
     }
 
-    // Cooldown de 120 ciclos entre disparos (~3,6 s a 30 fps).
+    // Cooldown de 120 ciclos entre disparos.
     public CargaProfundidad lanzarCarga() {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posicion.getX() + 40, posicion.getY() + 30), 3.0

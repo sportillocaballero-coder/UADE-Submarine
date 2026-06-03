@@ -1,0 +1,104 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: SerieDeBarcos
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Maneja la oleada de barcos enemigos de un nivel.
+  Controla cuantos barcos se generaron, cuantos pueden
+  estar en pantalla al mismo tiempo y cuando termino
+  la serie completa. Cada nivel crea una nueva serie.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - barcosActivos : List<Barco>
+      Lista de barcos que actualmente estan en pantalla.
+      Se agrega uno en generarBarco() y se eliminan los
+      inactivos en actualizarSerie().
+
+  - max : int
+      Maximo de barcos que pueden estar en pantalla al
+      mismo tiempo. En el juego siempre vale 3.
+      Se llama "maxSimultaneo" en el constructor.
+
+  - barcosGenerados : int
+      Contador de cuantos barcos ya fueron lanzados en
+      esta serie. Sube 1 en cada llamada a generarBarco().
+      Empieza en 0.
+
+  - totalBarcos : int
+      Cantidad total de barcos que tiene la serie.
+      En el juego siempre vale 12. Cuando barcosGenerados
+      llega a este valor no se generan mas barcos.
+
+  - velocidad : double
+      Velocidad en px/ciclo que se le asigna a cada
+      barco nuevo generado. Viene del nivel actual
+      (calculada en Juego.calcularVelocidad()).
+
+  - direccion : String
+      "derecha" o "izquierda". Define desde que borde
+      entran todos los barcos de la serie y hacia donde
+      se mueven. Se genera aleatoriamente en Juego.
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + SerieDeBarcos(total: int, maxSimultaneo: int, velocidad: double, direccion: String)
+      Constructor. Guarda todos los parametros. Inicializa
+      barcosGenerados=0 y crea la lista barcosActivos vacia.
+
+  + generarBarco() : void
+      Si puedeLanzarNuevoBarco() es true, crea un Barco
+      nuevo fuera del borde de pantalla correspondiente
+      a su direccion (borde izquierdo si va a derecha,
+      borde derecho si va a izquierda), con una posicion
+      X aleatoria fuera del area visible. Lo agrega a
+      barcosActivos e incrementa barcosGenerados.
+
+  + actualizarSerie() : void
+      Elimina de barcosActivos todos los barcos cuyo
+      isActivo() devuelva false (los que ya salieron
+      de pantalla). Se llama una vez por ciclo desde
+      Juego.actualizarJuego().
+
+  + serieFinalizada() : boolean
+      Devuelve true cuando se cumplieron DOS condiciones:
+        1. Se generaron todos los barcos (barcosGenerados >= totalBarcos).
+        2. No queda ningun barco activo en pantalla.
+      Si alguna falla, la serie sigue.
+
+  + getBarcosActivos() : List<Barco>
+      Getter de barcosActivos.
+
+  + puedeLanzarNuevoBarco() : boolean
+      Devuelve true si todavia quedan barcos por generar
+      (barcosGenerados < totalBarcos) Y hay lugar en
+      pantalla (barcosActivos.size() < max).
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. Typo en el diagrama: el constructor aparece duplicado
+     en el nombre: "SerieDeBarcos(SerieDeBarcos(...)".
+     El nombre correcto es simplemente:
+       + SerieDeBarcos(total: int, maxSimultaneo: int, velocidad: double, direccion: String)
+
+  2. Todos los atributos del diagrama estan presentes y
+     correctos en el codigo. No falta ninguno.
+
+  3. Todos los metodos del diagrama estan implementados
+     correctamente. No falta ninguno ni hay ninguno de
+     mas que no figure en el diagrama.
+
+========================================================
+FIN DE LA GUIA - SerieDeBarcos
+========================================================

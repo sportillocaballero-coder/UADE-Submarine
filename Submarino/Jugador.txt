@@ -1,0 +1,105 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: Jugador
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Representa al jugador humano. Guarda su nombre, puntaje,
+  cantidad de vidas y su submarino. Tambien controla la
+  logica de vida extra: por cada 500 puntos acumulados
+  se le otorga una vida adicional.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - nombreClave : String
+      Nombre del jugador ingresado al inicio. Se usa
+      para identificarlo en pantalla.
+
+  - puntaje : int
+      Puntaje acumulado durante la partida. Empieza en 0.
+      Sube con sumarPuntaje() cada vez que el submarino
+      evade o sobrevive una explosion.
+
+  - vidas : int
+      Cantidad de vidas restantes. Empieza en 3. Baja
+      con perderVida() y puede subir con verificaVidaExtra().
+
+  - sub : Submarino
+      El submarino que maneja el jugador. Se asigna desde
+      afuera con setSubmarino(). No se crea en el constructor
+      de Jugador, lo hace Juego al iniciar la partida.
+
+  - puntajeUltimaVida : int
+      Ultimo umbral de 500 puntos por el que ya se otorgo
+      una vida extra. Empieza en 0. Cada vez que se da
+      una vida extra sube 500. Sirve para no repetir
+      el bonus si se alcanza el mismo umbral dos veces.
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + Jugador(nombre: String)
+      Constructor. Guarda el nombre, inicializa puntaje=0,
+      vidas=3 y puntajeUltimaVida=0. No crea el submarino
+      (lo asigna Juego despues con setSubmarino()).
+
+  + getNombreClave() : String
+      Getter de nombreClave.
+
+  + getPuntaje() : int
+      Getter de puntaje.
+
+  + getVidas() : int   [NO figura en el diagrama]
+      Getter de vidas. Presente en el codigo pero ausente
+      en el diagrama. Ver nota al final.
+
+  + setSubmarino(sub: Submarino) : void
+      Asigna el submarino al jugador. Se llama desde Juego
+      al iniciar la partida y cada vez que el submarino
+      es destruido y se reinicia.
+
+  + verificaVidaExtra() : boolean
+      Otorga una vida extra por cada 500 puntos alcanzados
+      que todavia no se premiaron. Usa un bucle while para
+      no perderse saltos grandes de puntaje. Devuelve true
+      si se otorgo al menos una vida en esta llamada.
+
+  + perderVida() : void
+      Resta 1 a vidas.
+
+  + estaVivo() : boolean
+      Devuelve true si vidas > 0.
+
+  + getSubmarino() : Submarino
+      Getter de sub.
+
+  + sumarPuntaje(puntos: int) : void
+      Suma "puntos" al puntaje acumulado.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. El metodo getVidas() : int existe en el codigo pero
+     no figura en el diagrama. Hay que agregarlo:
+       + getVidas() : int
+
+  2. Typo en el diagrama: "sumarPuntuaje" tiene una 'u'
+     de mas. El codigo tiene el nombre correcto:
+     "sumarPuntaje". Corregir en el diagrama.
+
+  3. Todos los atributos del diagrama estan presentes y
+     correctos en el codigo. No falta ninguno.
+
+  4. Todos los demas metodos coinciden correctamente.
+
+========================================================
+FIN DE LA GUIA - Jugador
+========================================================

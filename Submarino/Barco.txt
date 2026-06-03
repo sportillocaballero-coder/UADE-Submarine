@@ -1,0 +1,129 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: Barco
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Representa un barco enemigo que cruza la pantalla de un
+  lado al otro lanzando cargas de profundidad hacia abajo.
+  Tiene su propia velocidad y direccion, gestiona su lista
+  de cargas lanzadas y se desactiva solo cuando sale del
+  area visible.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - activo : boolean
+      Indica si el barco sigue en juego. Se vuelve false
+      cuando el barco sale por el lado contrario al que
+      entro (x > 900 si va a derecha, x < -80 si va a
+      izquierda). Lo verifica actualizar() cada ciclo.
+
+  - velocidad : double
+      Pixeles que avanza el barco por cada ciclo. Se recibe
+      en el constructor y se usa en avanzar().
+
+  - cooldownDisparo : double
+      Contador de espera entre disparos. Empieza en 0.
+      Cuando el barco lanza una carga se pone en 120 ciclos
+      (~3.6 segundos a 30 fps). Baja 1 por ciclo en
+      actualizar(). Cuando llega a 0 el barco puede
+      volver a disparar.
+
+  - posicion : Punto
+      Posicion actual del barco en pantalla (x, y).
+      Se actualiza cada ciclo en avanzar().
+
+  - direccion : String
+      Vale "derecha" o "izquierda". Determina hacia donde
+      se mueve el barco y desde que borde sale.
+
+  [ATRIBUTO NO LISTADO EN EL DIAGRAMA - presente en el codigo]
+  - cargas : List<CargaProfundidad>
+      Lista de todas las cargas que este barco ha lanzado.
+      Se accede desde afuera con getCargas(). El diagrama
+      no la lista como atributo pero si expone getCargas()
+      como metodo, con lo cual el atributo debe existir.
+      Ver nota al final.
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + Barco(inicio: Punto, velocidad: double, direccion: String)
+      Constructor. Inicializa posicion, velocidad y
+      direccion con los parametros recibidos. Pone activo
+      en true, cooldownDisparo en 0 y crea la lista de
+      cargas vacia.
+
+  + actualizar() : void
+      Reduce el cooldownDisparo en 1 si es mayor que 0.
+      Verifica si el barco salio del area visible segun
+      su direccion y si es asi pone activo en false.
+      Se llama una vez por ciclo despues de avanzar().
+
+  + avanzar() : void
+      Mueve el barco sumando o restando la velocidad al
+      eje X segun su direccion ("derecha" suma, "izquierda"
+      resta).
+
+  + puedeLanzar() : boolean  [el diagrama dice "bool"]
+      Devuelve true si cooldownDisparo es <= 0, es decir,
+      si ya paso el tiempo de espera y puede lanzar
+      otra carga.
+
+  + lanzarCarga() : CargaProfundidad
+      Crea una nueva CargaProfundidad desplazada 40px a la
+      derecha y 30px abajo de la posicion del barco, con
+      velocidad de caida 3.0. La agrega a la lista interna
+      de cargas, pone el cooldown en 120 y devuelve la
+      carga creada.
+
+  + getPosicion() : Punto
+      Getter de posicion.
+
+  + getCargas() : List<CargaProfundidad>
+      Devuelve la lista de cargas lanzadas por este barco.
+
+  + getDireccion() : String
+      Getter de direccion.
+
+  + getVelocidad() : double
+      Getter de velocidad.
+
+  + isActivo() : boolean
+      Getter de activo. Usa convencion "is" en lugar de
+      "get" por ser booleano.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. Atributo "cargas" no figura en el diagrama.
+     El codigo tiene el atributo:
+         - cargas : List<CargaProfundidad>
+     El diagrama no lo lista entre los atributos, pero
+     si incluye getCargas() como metodo, lo cual implica
+     que el atributo debe estar. Hay que agregarlo al
+     diagrama para que sea completo.
+
+  2. Typo en el diagrama: "gerVelocidad()" con 'r'.
+     El codigo lo tiene bien escrito: "getVelocidad()".
+     El error es del diagrama, el codigo es correcto.
+
+  3. El diagrama escribe el tipo de retorno de puedeLanzar()
+     como "bool". En Java el tipo correcto es "boolean".
+     El codigo es correcto, el diagrama usa la notacion
+     de otro lenguaje.
+
+  4. Todos los demas atributos y metodos del diagrama
+     estan presentes y correctos en el codigo.
+
+========================================================
+FIN DE LA GUIA - Barco
+========================================================

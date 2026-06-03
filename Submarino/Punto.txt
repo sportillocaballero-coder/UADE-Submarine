@@ -1,0 +1,46 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: Punto
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Representa una coordenada 2D (x, y). Es la clase mas
+  simple del proyecto y la usan todas las demas clases
+  para guardar posiciones: Barco, CargaProfundidad,
+  Submarino. Solo sabe guardarse y moverse.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - x : double
+      Coordenada horizontal. Aumenta hacia la derecha.
+
+  - y : double
+      Coordenada vertical. Aumenta hacia abajo (sistema
+      de pantalla, no matematico).
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + Punto(x: double, y: double)
+      Constructor. Asigna los valores iniciales de x e y.
+
+  + getX() : double
+      Getter de x.
+
+  + getY() : double
+      Getter de y.
+
+  + mover(deltaX: double, deltaY: double) : void
+      Suma deltaX a x y deltaY a y. Es el unico metodo
+      que modifica el estado del punto. Lo usan avanzar()
+      en Barco, caer() en CargaProfundidad y mover() en
+      Submarino.
+
+

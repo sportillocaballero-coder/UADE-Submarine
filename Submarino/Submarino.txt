@@ -1,0 +1,92 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: Submarino
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Representa el submarino que controla el jugador.
+  Guarda su posicion, su vida actual y si sigue activo.
+  Recibe danio de las cargas enemigas y se desactiva
+  cuando la vida llega a 0. El jugador lo mueve a
+  traves de ControladorJuego.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - vidaActual : int
+      Vida restante del submarino. Empieza en 100.
+      Baja con recibirDanio(). Cuando llega a 0 el
+      submarino se desactiva.
+
+  - activo : boolean
+      Indica si el submarino sigue en juego. Se vuelve
+      false cuando vidaActual llega a 0 dentro de
+      recibirDanio(). ControladorJuego lo consulta para
+      saber si debe reiniciar el submarino.
+
+  - posicion : Punto
+      Posicion actual del submarino en pantalla (x, y).
+      Se modifica en mover() y cambiarProfundidad().
+
+-------------------------------------------------------
+METODOS
+-------------------------------------------------------
+
+  + Submarino(inicio: Punto)
+      Constructor. Recibe la posicion inicial, pone
+      vidaActual=100 y activo=true.
+
+  + mover(deltaX: double, deltaY: double) : void
+      Delega el movimiento en posicion.mover(). Mueve
+      el submarino en ambos ejes simultaneamente.
+      Lo llama ControladorJuego.procesarEntrada().
+
+  + cambiarProfundidad(metro: double) : void
+      Mueve el submarino solo en el eje Y (vertical).
+      Internamente llama a posicion.mover(0, metro).
+      Es un caso especifico de mover() solo en Y.
+
+  + recibirDanio(puntos: int) : void
+      Resta "puntos" a vidaActual. Si la vida queda en
+      0 o menos, la fija en 0 y pone activo=false.
+      El parametro se llama "puntos" en el codigo y
+      "porcentaje" en el diagrama. Ver nota al final.
+
+  + estaActivo() : boolean
+      Getter de activo.
+
+  + getPosicion() : Punto
+      Getter de posicion.
+
+  + getVidaActual() : int
+      Getter de vidaActual.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. El nombre del parametro de recibirDanio() es distinto.
+     El diagrama dice: recibirDanio(porcentaje: int)
+     El codigo dice:   recibirDanio(puntos: int)
+     No es un error critico (los parametros no afectan
+     el diagrama de clases funcionalmente), pero el
+     nombre "puntos" es mas correcto porque la vida es
+     sobre 100 y el danio se descuenta en puntos fijos
+     (30 o 50), no en porcentaje. Conviene actualizar
+     el diagrama al nombre del codigo: "puntos".
+
+  2. Todos los atributos del diagrama estan presentes y
+     correctos en el codigo. No falta ninguno.
+
+  3. Todos los metodos del diagrama estan implementados
+     correctamente. No falta ninguno ni hay ninguno de
+     mas que no figure en el diagrama.
+
+========================================================
+FIN DE LA GUIA - Submarino
+========================================================

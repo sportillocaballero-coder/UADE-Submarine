@@ -10,10 +10,10 @@ public class Juego {
     private SerieDeBarcos serieActual;
 
     // Límites del área jugable: pantalla 900×600, agua desde y=85.
-    private static final double X_MIN = 0;
-    private static final double X_MAX = 810;  // 900 - ancho del submarino (90)
-    private static final double Y_MIN = 85;   // justo bajo la línea del mar
-    private static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
+    public static final double X_MIN = 0;
+    public static final double X_MAX = 810;  // 900 - ancho del submarino (90)
+    public static final double Y_MIN = 85;   // justo bajo la línea del mar
+    public static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
 
     public Juego(String nombreJugador) {
         this.nivelActual = 1;
@@ -54,23 +54,6 @@ public class Juego {
 
     public boolean isActivo() {
         return activo;
-    }
-
-    public void moverSubmarino(String accion, double valor) {
-        Submarino sub = jugadorActual.getSubmarino();
-        switch (accion) {
-            case "izquierda": sub.mover(-valor, 0); break;
-            case "derecha":   sub.mover(valor, 0);  break;
-            case "arriba":    sub.mover(0, -valor);  break;
-            case "abajo":     sub.mover(0, valor);   break;
-        }
-        // Corregir si salió de los límites del área de agua
-        Punto pos = sub.getPosicion();
-        double cx = Math.max(X_MIN, Math.min(pos.getX(), X_MAX)) - pos.getX();
-        double cy = Math.max(Y_MIN, Math.min(pos.getY(), Y_MAX)) - pos.getY();
-        if (cx != 0 || cy != 0) {
-            sub.mover(cx, cy);
-        }
     }
 
     // Velocidad base 2 px/ciclo, +20% acumulado por cada nivel.

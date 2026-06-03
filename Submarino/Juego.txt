@@ -1,0 +1,149 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: Juego
+Paquete: modelo
+========================================================
+
+QUE HACE:
+  Es el estado central de la partida. Guarda el nivel
+  actual, el jugador, la serie de barcos activa y los
+  limites del area jugable. Tambien sabe cuando la
+  partida termino. El ControladorJuego la usa como
+  fuente de verdad de todo lo que pasa en la partida.
+
+-------------------------------------------------------
+ATRIBUTOS DE INSTANCIA
+-------------------------------------------------------
+
+  - nivelActual : int
+      Nivel en el que esta la partida. Empieza en 1 y
+      sube con subirNivel(). Influye en la velocidad
+      de los barcos (calcularVelocidad()).
+
+  - mejorPuntaje : int
+      Guarda el puntaje mas alto alcanzado. Se actualiza
+      en cerrarJuego() si el puntaje del jugador supera
+      el anterior. Empieza en 0.
+
+  - activo : boolean
+      Indica si la partida sigue en curso. Se vuelve
+      false en cerrarJuego() cuando el jugador pierde
+      todas las vidas.
+
+  - jugadorActual : Jugador
+      El jugador de la partida actual. Se crea en el
+      constructor con el nombre recibido y se le asigna
+      un Submarino en posicion inicial (400, 350).
+
+  - serieActual : SerieDeBarcos
+      La serie de barcos del nivel actual. Se crea en
+      el constructor y se reemplaza por una nueva en
+      cada llamada a subirNivel().
+
+-------------------------------------------------------
+ATRIBUTOS ESTATICOS (constantes del area jugable)
+-------------------------------------------------------
+
+  + X_MIN : double  {static final}   = 0
+      Borde izquierdo del area donde puede moverse
+      el submarino.
+
+  + X_MAX : double  {static final}   = 810
+      Borde derecho (900px de pantalla menos 90px
+      del ancho del submarino).
+
+  + Y_MIN : double  {static final}   = 85
+      Borde superior, justo debajo de la linea del mar.
+
+  + Y_MAX : double  {static final}   = 562
+      Borde inferior (600px menos alto del submarino
+      mas barra de estado: 38px).
+
+-------------------------------------------------------
+METODOS PUBLICOS
+-------------------------------------------------------
+
+  + Juego(nombreJugador: String)   [constructor - NO figura en el diagrama]
+      Inicializa nivelActual=1, mejorPuntaje=0, activo=true.
+      Crea el Jugador con el nombre recibido, le asigna
+      un Submarino y crea la primera SerieDeBarcos con
+      12 barcos maximos, 3 activos simultaneos, velocidad
+      y direccion calculadas para el nivel 1.
+      Ver nota al final sobre el constructor faltante.
+
+  + actualizarJuego() : void
+      Delega en serieActual.actualizarSerie(). Se llama
+      al final de cada ciclo desde ControladorJuego.
+
+  + subirNivel() : void
+      Incrementa nivelActual y crea una nueva SerieDeBarcos
+      con velocidad mayor (segun calcularVelocidad()) y
+      direccion aleatoria nueva.
+
+  + cerrarJuego() : void
+      Pone activo = false. Si el puntaje del jugador
+      supera mejorPuntaje, lo actualiza.
+
+  + getJugadorActual() : Jugador
+      Getter de jugadorActual.
+
+  + getSerieActual() : SerieDeBarcos
+      Getter de serieActual.
+
+  + getNivelActual() : int
+      Getter de nivelActual.
+
+  + isActivo() : boolean
+      Getter de activo.
+
+-------------------------------------------------------
+METODOS PRIVADOS
+-------------------------------------------------------
+
+  - calcularVelocidad() : double
+      Calcula la velocidad de los barcos para el nivel
+      actual. Formula: 2.0 * 1.2^(nivelActual-1).
+      Nivel 1 = 2.0 px/ciclo, nivel 2 = 2.4, nivel 3 = 2.88, etc.
+      Crece un 20% acumulado por nivel.
+
+  - generarDireccion() : String
+      Devuelve "derecha" o "izquierda" al azar (50/50)
+      para la nueva serie de barcos de cada nivel.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. Los atributos estaticos en el diagrama usan nombre
+     en minuscula: x_min, x_max, y_min, y_max.
+     En el codigo son constantes en MAYUSCULA: X_MIN,
+     X_MAX, Y_MIN, Y_MAX (convencion Java para static final).
+     Hay que corregir el diagrama a mayusculas.
+
+  2. El diagrama lista "x_max" DOS VECES y nunca aparece
+     "y_max". Es un typo: la segunda "x_max" deberia
+     ser "y_max". Corregir en el diagrama.
+
+  3. Los atributos estaticos en el diagrama no tienen
+     visibilidad marcada. En el codigo son public (+).
+     Hay que agregar el "+" en el diagrama.
+
+  4. calcularVelocidad() y generarDireccion() en el
+     diagrama aparecen como publicos (+). En el codigo
+     son private. Deberian cambiarse a "-" en el diagrama
+     ya que solo los usa el constructor y subirNivel()
+     desde adentro de la misma clase.
+
+  5. Falta el constructor en el diagrama:
+       + Juego(nombreJugador: String)
+     Hay que agregarlo.
+
+  6. Todos los demas atributos y metodos coinciden
+     correctamente entre el diagrama y el codigo.
+
+========================================================
+FIN DE LA GUIA - Juego
+========================================================

@@ -40,6 +40,21 @@ public class CargaProfundidad {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * Daño que esta carga causa al submarino según distancia:
+     *  > 100 px  →  0  (sin daño)
+     *  50–100 px → 30
+     *  10–50 px  → 50
+     *  ≤ 10 px   → -1  (muerte instantánea)
+     */
+    public int calcularDanio(Submarino sub) {
+        double dist = calcularDistancia(sub);
+        if (dist > 100) return 0;
+        if (dist > 50)  return 30;
+        if (dist > 10)  return 50;
+        return -1;
+    }
+
     // Marca la carga como explotada e inicia la animación de 25 frames.
     public void forzarExplosion() {
         if (!explotada) {
@@ -53,6 +68,10 @@ public class CargaProfundidad {
         if (tiempoExplosion > 0) {
             tiempoExplosion--;
         }
+    }
+
+    public double getVelocidad() {
+        return velocidad;
     }
 
     public boolean estaExplotada() {

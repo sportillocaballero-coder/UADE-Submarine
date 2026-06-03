@@ -3,7 +3,7 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
-// Maneja la oleada de barcos enemigos de un nivel.
+// Oleada de barcos enemigos en el nivel
 public class SerieDeBarcos {
 
     private List<Barco> barcosActivos;
@@ -17,7 +17,7 @@ public class SerieDeBarcos {
      * @param total         barcos totales de la serie (siempre 12)
      * @param maxSimultaneo máximo en pantalla al mismo tiempo (siempre 3)
      * @param velocidad     píxeles por ciclo que avanza cada barco
-     * @param direccion     "derecha" (izq→der) o "izquierda" (der→izq)
+     * @param direccion     Derecha izquierda o viceversa
      */
     public SerieDeBarcos(int total, int maxSimultaneo, double velocidad, String direccion) {
         this.totalBarcos = total;
@@ -28,7 +28,7 @@ public class SerieDeBarcos {
         this.direccion = direccion;
     }
 
-    // Genera un barco fuera del borde correspondiente según la dirección.
+    // Genera un barco fuera del borde
     public void generarBarco() {
         if (puedeLanzarNuevoBarco()) {
             double x;

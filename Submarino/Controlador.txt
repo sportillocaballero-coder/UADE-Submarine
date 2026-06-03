@@ -1,0 +1,139 @@
+========================================================
+       GUIA DEL CODIGO - POO SUBMARINO
+========================================================
+
+========================================================
+CLASE: ControladorJuego
+Paquete: controlador
+========================================================
+
+QUE HACE:
+  Es el coordinador central del juego. Se encarga de conectar
+  la logica del modelo (Juego, Submarino, Barcos, Cargas) con
+  lo que el jugador hace y con el paso del tiempo (ciclos).
+  No dibuja nada, no guarda datos propios del juego: solo
+  coordina y delega.
+
+-------------------------------------------------------
+ATRIBUTOS
+-------------------------------------------------------
+
+  - juego : Juego
+      Referencia al objeto principal del modelo. Contiene
+      el jugador actual, la serie de barcos activa, el nivel,
+      etc. Se crea en iniciarJuego().
+
+  - ciclos : int
+      Contador de ciclos transcurridos desde el inicio del
+      nivel actual. Se usa para controlar cada cuantos ciclos
+      se genera un nuevo barco (actualmente cada 80 ciclos).
+      Se reinicia a 0 al subir de nivel.
+
+-------------------------------------------------------
+METODOS PUBLICOS
+-------------------------------------------------------
+
+  + iniciarJuego(nombre: String) : void
+      Crea un nuevo objeto Juego con el nombre del jugador
+      y pone ciclos en 0. Es el punto de entrada: todo
+      empieza aqui.
+
+  + procesarEntrada(accion: String, valor: double) : void
+      Recibe una accion del jugador ("izquierda", "derecha",
+      "arriba", "abajo") y un valor de cuanto mover.
+      Llama a sub.mover() con los deltas correspondientes.
+      Despues verifica que el submarino no se haya salido
+      del area de agua definida por Juego.X_MIN/X_MAX/Y_MIN/Y_MAX
+      y lo corrige si es necesario.
+
+  + ejecutarCiclo() : void
+      Es el "tick" del juego. Se llama repetidamente desde
+      la vista/timer. En cada ciclo:
+        1. Incrementa el contador ciclos.
+        2. Cada 80 ciclos, si la serie puede, genera un barco nuevo.
+        3. Para cada barco activo:
+             - Lo hace avanzar (avanzar + actualizar).
+             - Si puede lanzar, lanza una carga de profundidad.
+             - Para cada carga que no haya explotado:
+                 * La hace caer (caer()).
+                 * Verifica si cruzo la profundidad del submarino
+                   en este ciclo (logica de cruce de Y).
+                 * Si corresponde, fuerza la explosion y llama
+                   a aplicarEfectoExplosion().
+             - Si la carga ya exploto y sigue animandose, avanza
+               la animacion (actualizarExplosion()).
+        4. Llama a juego.actualizarJuego().
+        5. Llama a verificarCambioNivel().
+        6. Llama a evaluarFinDeJuego().
+
+  + getJuego() : Juego
+      Getter simple. Devuelve la referencia al objeto Juego
+      para que la vista pueda leer el estado y dibujarlo.
+
+  + aplicarEfectoExplosion(c: CargaProfundidad) : void
+      Calcula el danio de la explosion sobre el submarino
+      usando c.calcularDanio(sub). Segun el resultado:
+        - danio == 0  : explosion lejos, suma 30 puntos.
+        - danio > 0   : explosion cerca, aplica danio al sub.
+                        Si era danio medio (30), suma 10 puntos igual.
+                        Si el sub quedo destruido: perderVida()
+                        y reiniciarSubmarino().
+        - danio == -1 : colision directa, perderVida()
+                        y reiniciarSubmarino() directamente.
+      Al final siempre llama a jugador.verificaVidaExtra().
+
+      NOTA: El calculo del danio y sus umbrales son
+      responsabilidad de CargaProfundidad (patron Information
+      Expert), no de este controlador.
+
+-------------------------------------------------------
+METODOS PRIVADOS
+-------------------------------------------------------
+
+  - reiniciarSubmarino() : void
+      Crea un Submarino nuevo en la posicion inicial fija
+      (x=400, y=350) y se lo asigna al jugador actual.
+      Se llama cuando el submarino es destruido.
+
+  - verificarCambioNivel() : void  [en el codigo es public]
+      Verifica si la serie de barcos del nivel actual termino
+      (serieFinalizada()). Si termino:
+        - Suma 200 puntos al jugador.
+        - Verifica si gano vida extra.
+        - Sube de nivel (juego.subirNivel()).
+        - Reinicia ciclos a 0.
+
+      OJO: En el codigo aparece como public, pero en el
+      diagrama figura como privado (-). Ver nota al final.
+
+  - evaluarFinDeJuego() : void  [en el codigo es public]
+      Verifica si el jugador perdio todas sus vidas
+      (!estaVivo()). Si es asi, llama a juego.cerrarJuego().
+
+      OJO: En el codigo aparece como public, pero en el
+      diagrama figura como privado (-). Ver nota al final.
+
+-------------------------------------------------------
+DIFERENCIAS ENTRE EL CODIGO Y EL DIAGRAMA DE CLASES
+-------------------------------------------------------
+
+  1. verificarCambioNivel() y evaluarFinDeJuego()
+     En el diagrama aparecen como privados (-).
+     En el codigo son public.
+     DECISION: deberian ser privados ya que solo los llama
+     ejecutarCiclo() desde dentro de la misma clase.
+     Conviene cambiarlos a private en el codigo para que
+     coincidan con el diagrama.
+
+  2. Nombre "verfificarCambioNivel" en el diagrama tiene
+     un typo (doble 'f': "verfificar"). En el codigo esta
+     bien escrito: "verificarCambioNivel". El codigo es
+     correcto, el diagrama tiene el error tipografico.
+
+  3. Todos los atributos y metodos del diagrama estan
+     presentes en el codigo. No falta ninguno y no hay
+     ninguno de mas que no figure en el diagrama.
+
+========================================================
+FIN DE LA GUIA - ControladorJuego
+========================================================

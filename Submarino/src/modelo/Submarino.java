@@ -1,13 +1,13 @@
 package modelo;
 
-// Submarino del jugador. Recibe daño de las cargas enemigas.
+// El submarino recibe el daño de las cargas
 public class Submarino {
 
     private int vidaActual;
     private boolean activo;
     private Punto posicion;
 
-    // Comienza con 100 de vida.
+    // Comienza con 100 puntos de vida de vida.
     public Submarino(Punto inicio) {
         this.posicion = inicio;
         this.vidaActual = 100;
@@ -22,7 +22,7 @@ public class Submarino {
         posicion.mover(0, metro);
     }
 
-    // El daño es una cantidad fija de puntos (sobre 100 de vida máxima).
+    // El daño es una cantidad fija de puntos.
     public void recibirDanio(int puntos) {
         vidaActual -= puntos;
         if (vidaActual <= 0) {
