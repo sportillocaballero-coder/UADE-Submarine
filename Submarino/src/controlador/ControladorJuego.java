@@ -1,11 +1,16 @@
 package controlador;
 
+import views.BarcoView;
+import views.JugadorView;
+import views.SubmarinoView;
+import java.util.List;
+import java.util.ArrayList;
+import modelo.Juego;
 import modelo.Barco;
 import modelo.CargaProfundidad;
 import modelo.Jugador;
-import modelo.Juego;
-import modelo.SerieDeBarcos;
 import modelo.Submarino;
+import modelo.SerieDeBarcos;
 
 // Controlador del juego: coordina barcos, cargas, explosiones y niveles.
 public class ControladorJuego {
@@ -117,5 +122,24 @@ public class ControladorJuego {
 
     public Juego getJuego() {
         return juego;
+    }
+
+    public SubmarinoView getSubmarinoView() {
+        return juego.getJugadorActual().getSubmarino().toView();
+    }
+
+    public JugadorView getJugadorView() {
+        return juego.getJugadorActual().toView(
+               juego.getNivelActual(),
+               juego.isActivo()
+    );
+    }
+
+    public List<BarcoView> getBarcosView() {
+        List<BarcoView> lista = new ArrayList<>();
+        for (modelo.Barco b : juego.getSerieActual().getBarcosActivos()) {
+            lista.add(b.toView());
+        }
+        return lista;
     }
 }
