@@ -1,0 +1,115 @@
+========================================
+  CLASE: ControladorJuego
+  PAQUETE: controlador
+  ARCHIVO: ControladorJuego.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Es el intermediario entre el Modelo y la Vista siguiendo el patrón MVC
+enseñado en clase. Coordina toda la lógica del ciclo de juego:
+mueve los barcos, hace caer las cargas, detecta explosiones,
+aplica daño al submarino, verifica cambios de nivel y el fin del juego.
+También expone los métodos que devuelven DTOs (Views) para que la Vista
+pueda dibujar el estado del juego sin acceder al modelo directamente.
+
+
+ATRIBUTOS
+---------
+- juego (Juego)
+    Referencia al estado completo de la partida.
+    Es el único punto de acceso al modelo.
+
+- ciclos (int)
+    Contador de ciclos transcurridos desde el inicio del nivel.
+    Se usa para controlar cada cuántos ciclos se genera un nuevo barco (cada 80).
+    Se reinicia a 0 al cambiar de nivel.
+
+
+MÉTODOS
+-------
+- iniciarJuego(String nombre)
+    Crea una nueva instancia de Juego con el nombre del jugador
+    e inicializa el contador de ciclos en 0.
+    Es el punto de entrada para comenzar una partida.
+
+- procesarEntrada(String accion, double valor)
+    Recibe la acción del teclado ("izquierda", "derecha", "arriba", "abajo")
+    y mueve el submarino en consecuencia.
+    Aplica corrección de límites: si el submarino sale del área jugable
+    lo reposiciona en el borde usando las constantes de Juego
+    (X_MIN, X_MAX, Y_MIN, Y_MAX).
+
+- ejecutarCiclo()
+    Método central del game loop. Se llama cada 30ms desde la Vista.
+    Realiza en orden:
+      1. Incrementa el contador de ciclos.
+      2. Genera un nuevo barco cada 80 ciclos si la serie lo permite.
+      3. Para cada barco activo: avanza, actualiza y lanza cargas.
+      4. Para cada carga: la hace caer y detecta si debe explotar.
+      5. Detecta explosión con precisión de un ciclo para evitar
+         múltiples disparos: verifica que la carga cruzó la Y del
+         submarino exactamente en este ciclo.
+      6. Llama a actualizarJuego(), verificarCambioNivel() y evaluarFinDeJuego().
+
+- aplicarEfectoExplosion(CargaProfundidad c)
+    Aplica las consecuencias de una explosión al jugador y al submarino.
+    Delega el cálculo del daño a CargaProfundidad (patrón Information Expert).
+    Según el daño devuelto:
+      danio == 0:  suma 30 puntos (explosión lejana).
+      danio == 30: suma 10 puntos y aplica 30% de daño a la vida.
+      danio == 50: aplica 50% de daño a la vida sin sumar puntos.
+      danio == -1: pierde 1 vida directamente (impacto directo).
+    En todos los casos verifica si se ganó una vida extra.
+
+- reiniciarSubmarino() [privado]
+    Crea un nuevo Submarino en la posición inicial (400, 350)
+    y lo asigna al jugador. Es llamado cuando el submarino es destruido.
+
+- verificarCambioNivel()
+    Verifica si la serie actual finalizó.
+    Si finalizó: suma 200 puntos, verifica vida extra, sube de nivel
+    y reinicia el contador de ciclos.
+
+- evaluarFinDeJuego()
+    Verifica si el jugador perdió todas sus vidas.
+    Si es así, llama a juego.cerrarJuego() para terminar la partida.
+
+- getJuego()
+    Devuelve la instancia del Juego. Usada en los tests.
+
+- getSubmarinoView()
+    Devuelve un SubmarinoView generado por el propio Submarino (toView()).
+    La Vista usa este método para dibujar el submarino.
+
+- getJugadorView()
+    Devuelve un JugadorView generado por el propio Jugador (toView()).
+    La Vista usa este método para dibujar el HUD (vidas, puntaje, nivel).
+
+- getBarcosView()
+    Recorre los barcos activos y devuelve una List<BarcoView>.
+    Cada BarcoView incluye la posición del barco y sus CargaView.
+    La Vista usa este método para dibujar todos los barcos y cargas.
+
+
+REGLAS DE NEGOCIO QUE IMPLEMENTA
+---------------------------------
+RN-13: Por cada cambio de nivel el jugador obtiene 200 puntos.
+RN-14: Cuando las vidas llegan a 0 la partida finaliza.
+RN-16: El jugador avanza de nivel al sobrevivir a la serie completa.
+
+
+PATRONES DE DISEÑO APLICADOS
+------------------------------
+- MVC (Model-View-Controller): el Controlador es el único intermediario
+  entre el Modelo y la Vista. La Vista nunca accede al Modelo directamente.
+- Information Expert: delega el cálculo de daño a CargaProfundidad.
+- DTO / View Object: expone métodos que devuelven objetos View en lugar
+  de objetos del modelo, protegiendo la lógica de negocio.
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- Juego: accede a todo el modelo a través del Juego.
+- Ventana: la Vista llama a los métodos del Controlador.
+- SubmarinoView, JugadorView, BarcoView: el Controlador los devuelve a la Vista.

@@ -1,0 +1,147 @@
+========================================
+  CLASE: Ventana
+  PAQUETE: gui
+  ARCHIVO: Ventana.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Es la Vista del patrón MVC. Representa la interfaz gráfica del juego.
+Se encarga de capturar las teclas del jugador, ejecutar el game loop
+y dibujar todos los elementos del juego en pantalla cada 30ms.
+No accede al modelo directamente: solo usa los DTOs (Views) que
+le provee el Controlador.
+
+
+ATRIBUTOS
+---------
+- ANCHO (int, constante)
+    Ancho de la ventana en píxeles: 900.
+
+- ALTO (int, constante)
+    Alto de la ventana en píxeles: 600.
+
+- controlador (ControladorJuego)
+    Única referencia al Controlador. La Vista solo se comunica
+    con el modelo a través de él.
+
+
+MÉTODOS Y COMPONENTES
+---------------------
+- Ventana(String nombreJugador)
+    Constructor. Inicializa el Controlador, crea el PanelJuego,
+    configura la ventana, registra el KeyListener y arranca el Timer.
+
+- KeyAdapter (listener de teclado)
+    Captura las teclas de dirección (flechas) y llama a
+    controlador.procesarEntrada() con la acción correspondiente.
+    IMPORTANTE: antes de procesar la entrada verifica si el juego
+    está activo mediante controlador.getJugadorView().isJuegoActivo().
+    Si el juego terminó, ignora todas las teclas.
+
+- Timer gameLoop
+    Ejecuta el ciclo de juego cada 30ms llamando a:
+      1. controlador.ejecutarCiclo() para actualizar el modelo.
+      2. panel.repaint() para redibujar la pantalla.
+    IMPORTANTE: también verifica isJuegoActivo() antes de ejecutar.
+    Si el juego terminó, el timer deja de procesar ciclos
+    pero la pantalla sigue visible mostrando el Game Over.
+
+- PanelJuego (clase interna)
+    Extiende JPanel y sobreescribe paintComponent(Graphics g).
+    Es llamado automáticamente en cada repaint().
+    Dibuja en orden:
+      1. Fondo: cielo celeste (0,0 a 900,80) y agua azul (0,80 a 900,600).
+      2. Línea del mar: franja azul oscuro en y=75.
+      3. Barcos: usa getBarcosView() para obtener List<BarcoView>
+         y dibuja cada barco como un polígono verde con texto "BARCO".
+      4. Cargas: para cada BarcoView itera sus CargaView.
+         Si no explotó: dibuja un círculo rojo con borde amarillo.
+         Si está explotando: dibuja círculos concéntricos naranja/amarillo
+         que se expanden según el tiempoExplosion.
+      5. Submarino: usa getSubmarinoView() para obtener SubmarinoView
+         y dibuja el cuerpo azul con periscopio y texto "SUB".
+      6. Barra de vida: debajo del submarino, verde si vida > 50, roja si no.
+      7. HUD: usa getJugadorView() para mostrar vidas, puntaje y nivel
+         en la esquina superior derecha.
+      8. Game Over: si !isJuegoActivo() dibuja un overlay negro semitransparente
+         con el texto "GAME OVER" en rojo centrado en pantalla.
+
+
+PATRONES APLICADOS
+------------------
+- MVC (Vista): la Ventana solo conoce al Controlador, nunca al Modelo.
+- DTO: solo usa objetos View (SubmarinoView, JugadorView, BarcoView, CargaView).
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- ControladorJuego: la Vista se comunica exclusivamente con el Controlador.
+- SubmarinoView, JugadorView, BarcoView, CargaView: los DTOs que recibe y dibuja.
+
+
+========================================
+  CLASE: Test
+  PAQUETE: test
+  ARCHIVO: Test.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Clase de pruebas que verifica que las reglas de negocio del juego
+funcionen correctamente. Ejecuta 10 tests unitarios sobre la lógica
+del modelo sin necesidad de abrir la interfaz gráfica.
+Cada test verifica una mecánica específica del juego de forma aislada.
+
+
+TESTS IMPLEMENTADOS
+-------------------
+1. testVidaExtraEn500Puntos()
+   Verifica que el jugador gane 1 vida extra al acumular 500 puntos
+   y otra al acumular 1000 puntos.
+
+2. testPuntajePorExplosionLejos()
+   Verifica que una explosión a más de 100px sume 30 puntos y no cause daño.
+
+3. testDanioExplosionMedia()
+   Verifica que una explosión entre 50 y 100px sume 10 puntos y reste 30% de vida.
+
+4. testDanioExplosionCerca()
+   Verifica que una explosión entre 10 y 50px no sume puntos y reste 50% de vida.
+
+5. testPerdidaVidaExplosionDirecta()
+   Verifica que una explosión a menos de 10px quite 1 vida directamente.
+
+6. testPuntajeAlSubirNivel()
+   Verifica que al subir de nivel se sumen 200 puntos automáticamente.
+
+7. testSerieMaximo3BarcosSumulaneos()
+   Verifica que la serie nunca tenga más de 3 barcos activos simultáneos.
+
+8. testSerieFinaliza12Barcos()
+   Verifica que la serie se marque como finalizada después de que
+   los 12 barcos completaron su recorrido.
+
+9. testProfundidadDetonacionAleatoria()
+   Genera 100 cargas y verifica que todas tengan profundidad entre 300 y 700.
+
+10. testVelocidadAumentaPorNivel()
+    Verifica que la velocidad del nivel 2 sea exactamente un 20% mayor
+    que la del nivel 1.
+
+
+ESTRUCTURA DEL TEST
+-------------------
+- verificar(String nombre, boolean condicion)
+    Método utilitario que imprime "Exitoso" o "Fallado" según la condición
+    e incrementa los contadores de éxitos y fallos.
+
+- Al finalizar todos los tests imprime el resumen:
+    "Resultados: X OK | Y FALLOS"
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- ControladorJuego: varios tests inicializan el juego mediante el Controlador.
+- Jugador, Submarino, CargaProfundidad, SerieDeBarcos: accedidos directamente
+  para configurar escenarios de prueba específicos.

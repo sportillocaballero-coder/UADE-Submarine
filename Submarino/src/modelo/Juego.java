@@ -10,10 +10,10 @@ public class Juego {
     private SerieDeBarcos serieActual;
 
     // Límites del área jugable: pantalla 900×600, agua desde y=85.
-    private static final double X_MIN = 0;
-    private static final double X_MAX = 810;  // 900 - ancho del submarino (90)
-    private static final double Y_MIN = 85;   // justo bajo la línea del mar
-    private static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
+    public static final double X_MIN = 0;
+    public static final double X_MAX = 810;  // 900 - ancho del submarino (90)
+    public static final double Y_MIN = 85;   // justo bajo la línea del mar
+    public static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
 
     public Juego(String nombreJugador) {
         this.nivelActual = 1;

@@ -1,0 +1,75 @@
+========================================
+  CLASE: Submarino
+  PAQUETE: modelo
+  ARCHIVO: Submarino.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Representa al submarino que maneja el jugador durante la partida.
+Es la entidad principal del juego y el objetivo de los ataques enemigos.
+Conoce su propia posición, su vida actual y si sigue activo o fue destruido.
+
+
+ATRIBUTOS
+---------
+- vidaActual (int)
+    Puntos de vida del submarino. Comienza en 100 y disminuye al recibir daño.
+    Cuando llega a 0 el submarino se desactiva.
+
+- activo (boolean)
+    Indica si el submarino sigue en juego. Se vuelve false cuando vidaActual llega a 0.
+
+- posicion (Punto)
+    Coordenada X e Y del submarino dentro del área jugable.
+    X se mueve entre 0 y 810 (ancho de pantalla menos el ancho del submarino).
+    Y se mueve entre 85 y 562 (área del agua).
+
+
+MÉTODOS
+-------
+- Submarino(Punto inicio)
+    Constructor. Inicializa el submarino con 100 de vida, activo = true
+    y en la posición indicada (por defecto 400, 350).
+
+- mover(double deltaX, double deltaY)
+    Desplaza el submarino sumando los deltas a su posición actual.
+    Es llamado por el Controlador cuando el jugador presiona las teclas de dirección.
+
+- cambiarProfundidad(double metro)
+    Mueve el submarino verticalmente. Es un alias de mover(0, metro).
+
+- recibirDanio(int puntos)
+    Resta puntos de vida al submarino.
+    Si la vida llega a 0 o menos, la establece en 0 y marca activo = false.
+
+- estaActivo()
+    Devuelve true si el submarino todavía tiene vida.
+    El Controlador lo consulta para saber si debe reiniciar el submarino.
+
+- getPosicion()
+    Devuelve el objeto Punto con la posición actual del submarino.
+
+- getVidaActual()
+    Devuelve el valor actual de vida (0 a 100).
+
+- toView()
+    Implementa el patrón DTO (patrón enseñado en clase).
+    Genera y devuelve un objeto SubmarinoView con los datos necesarios
+    para que la Vista pueda dibujar el submarino sin acceder al modelo directamente.
+
+
+REGLAS DE NEGOCIO QUE IMPLEMENTA
+---------------------------------
+RN-01: El submarino se mueve horizontalmente y verticalmente.
+RN-02: El submarino inicia con 100 puntos de vida.
+RN-03: Cuando la vida llega a 0 el submarino se desactiva.
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- Punto: usa Punto para representar su posición.
+- Jugador: el Jugador posee un Submarino.
+- CargaProfundidad: recibe daño calculado por CargaProfundidad.
+- ControladorJuego: el Controlador mueve el submarino y verifica su estado.
+- SubmarinoView: el Submarino genera su propio DTO mediante toView().

@@ -1,0 +1,94 @@
+========================================
+  CLASE: SerieDeBarcos
+  PAQUETE: modelo
+  ARCHIVO: SerieDeBarcos.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Representa una oleada completa de barcos enemigos en un nivel.
+Administra la generación progresiva de barcos, respetando el límite
+de 3 barcos simultáneos en pantalla y el total de 12 por serie.
+La serie finaliza cuando los 12 barcos completaron su recorrido.
+
+
+ATRIBUTOS
+---------
+- barcosActivos (List<Barco>)
+    Lista de barcos que actualmente están en pantalla y en movimiento.
+    Se actualiza eliminando los barcos que ya completaron su recorrido.
+
+- max (int)
+    Máximo de barcos que pueden estar simultáneamente en pantalla.
+    Siempre es 3 según las reglas del juego.
+
+- barcosGenerados (int)
+    Contador de cuántos barcos fueron lanzados desde el inicio de la serie.
+    Cuando llega a totalBarcos ya no se generan más.
+
+- totalBarcos (int)
+    Total de barcos que componen la serie. Siempre es 12.
+
+- velocidad (double)
+    Velocidad de movimiento de los barcos de esta serie.
+    Escala un 20% acumulativo por cada nivel.
+
+- direccion (String)
+    Dirección en que se mueven todos los barcos de la serie.
+    Es aleatoria: "derecha" o "izquierda". Se define al crear la serie.
+
+- velocidadCarga (double)
+    Velocidad de caída de las cargas que lanzan los barcos de esta serie.
+    También escala un 20% por nivel.
+
+
+MÉTODOS
+-------
+- SerieDeBarcos(int total, int maxSimultaneo, double velocidad,
+                String direccion, double velocidadCarga)
+    Constructor. Inicializa la serie con los parámetros del nivel actual.
+    Siempre se llama con total=12 y maxSimultaneo=3.
+
+- generarBarco()
+    Crea un nuevo barco y lo agrega a barcosActivos si puedeLanzarNuevoBarco().
+    La posición inicial X es aleatoria fuera del borde correspondiente
+    a la dirección: fuera del borde izquierdo si va a "derecha" y viceversa.
+    Incrementa barcosGenerados.
+
+- actualizarSerie()
+    Elimina de barcosActivos todos los barcos cuyo isActivo() sea false.
+    Es llamada cada ciclo por el Controlador después de procesar los barcos.
+
+- serieFinalizada()
+    Devuelve true cuando se generaron los 12 barcos Y no quedan
+    barcos activos en pantalla.
+    El Controlador usa este método para saber cuándo subir de nivel.
+
+- puedeLanzarNuevoBarco()
+    Devuelve true si se pueden lanzar más barcos.
+    Condición: barcosGenerados < totalBarcos Y barcosActivos.size() < max.
+    Garantiza que nunca haya más de 3 barcos simultáneos.
+
+- getBarcosActivos()
+    Devuelve la lista de barcos actualmente en pantalla.
+    Usada por el Controlador para iterar y actualizar cada barco.
+
+- getVelocidad()
+    Devuelve la velocidad de la serie.
+    Usada en los tests para verificar que escale correctamente por nivel.
+
+
+REGLAS DE NEGOCIO QUE IMPLEMENTA
+---------------------------------
+RN-05: Cada serie está compuesta por exactamente 12 barcos.
+       Nunca puede haber más de 3 barcos simultáneos en pantalla.
+RN-06: Cada barco nuevo aparece desde la izquierda o derecha de manera aleatoria.
+RN-07: La serie finaliza cuando los 12 barcos completaron su recorrido.
+RN-17: La velocidad aumenta 20% acumulativo por cada nivel.
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- Barco: la Serie crea y administra los barcos activos.
+- Juego: el Juego crea una nueva SerieDeBarcos al iniciar y al subir de nivel.
+- ControladorJuego: el Controlador consulta y actualiza la serie cada ciclo.

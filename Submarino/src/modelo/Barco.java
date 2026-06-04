@@ -5,7 +5,7 @@ import java.util.List;
 
 import views.BarcoView;
 import views.CargaView;
-import views.SubmarinoView;
+
 
 // Barco enemigo que cruza la pantalla lanzando cargas de profundidad.
 public class Barco {

@@ -1,0 +1,100 @@
+========================================
+  CLASE: Jugador
+  PAQUETE: modelo
+  ARCHIVO: Jugador.java
+========================================
+
+DESCRIPCION GENERAL
+-------------------
+Representa al jugador humano dentro de la partida.
+Administra el puntaje, las vidas, el nombre clave y posee al Submarino.
+Es el objeto que acumula el estado personal del jugador a lo largo del juego.
+
+
+ATRIBUTOS
+---------
+- nombreClave (String)
+    Nombre identificador del jugador. Se asigna al iniciar la partida
+    y se muestra en pantalla y en el récord final.
+
+- puntaje (int)
+    Puntos acumulados durante la partida. Empieza en 0.
+    Aumenta según la distancia de las explosiones y al cambiar de nivel.
+
+- vidas (int)
+    Cantidad de vidas disponibles. Comienza en 3.
+    Se pierde una vida cuando el submarino es destruido por impacto directo.
+    Se gana una vida extra cada 500 puntos acumulados.
+
+- sub (Submarino)
+    El submarino asociado al jugador. Es asignado al iniciar la partida
+    y reemplazado cada vez que el submarino es destruido.
+
+- puntajeUltimaVida (int)
+    Umbral acumulativo que registra el último múltiplo de 500 puntos
+    por el que ya se otorgó una vida extra. Evita dar vidas duplicadas.
+
+
+MÉTODOS
+-------
+- Jugador(String nombre)
+    Constructor. Inicializa el jugador con 0 puntos, 3 vidas
+    y establece el nombre clave.
+
+- sumarPuntaje(int puntos)
+    Suma puntos al puntaje actual del jugador.
+    Es llamado por el Controlador según el resultado de cada explosión
+    y al cambiar de nivel.
+
+- verificaVidaExtra()
+    Verifica si el jugador alcanzó un nuevo múltiplo de 500 puntos
+    y otorga una vida extra por cada uno alcanzado.
+    Usa un umbral acumulativo para no perderse saltos de puntuación.
+    Devuelve true si se otorgó al menos una vida.
+
+- perderVida()
+    Descuenta una vida al jugador.
+    Es llamado por el Controlador cuando el submarino es destruido.
+
+- estaVivo()
+    Devuelve true si el jugador tiene al menos 1 vida.
+    El Controlador lo consulta para evaluar el fin del juego.
+
+- getSubmarino()
+    Devuelve el submarino asociado al jugador.
+
+- setSubmarino(Submarino sub)
+    Reemplaza el submarino actual por uno nuevo.
+    Es usado por el Controlador para reiniciar el submarino tras destruirse.
+
+- getNombreClave()
+    Devuelve el nombre del jugador.
+
+- getPuntaje()
+    Devuelve el puntaje actual.
+
+- getVidas()
+    Devuelve la cantidad de vidas restantes.
+
+- toView(int nivel, boolean juegoActivo)
+    Implementa el patrón DTO (patrón enseñado en clase).
+    Genera y devuelve un objeto JugadorView con vidas, puntaje, nivel
+    y estado del juego para que la Vista pueda mostrar el HUD
+    sin acceder al modelo directamente.
+    Recibe nivel y juegoActivo como parámetros porque esos datos
+    pertenecen al Juego, no al Jugador.
+
+
+REGLAS DE NEGOCIO QUE IMPLEMENTA
+---------------------------------
+RN-12: Por cada 500 puntos acumulados el jugador obtiene 1 vida extra.
+RN-14: Cuando las vidas llegan a 0 la partida finaliza.
+RN-15: El jugador tiene un nombre clave y un puntaje durante toda la partida.
+
+
+RELACIONES CON OTRAS CLASES
+----------------------------
+- Submarino: el Jugador posee y administra un Submarino.
+- Juego: el Juego crea y contiene al Jugador.
+- ControladorJuego: el Controlador suma puntaje, quita vidas y verifica estado.
+- JugadorView: el Jugador genera su propio DTO mediante toView().

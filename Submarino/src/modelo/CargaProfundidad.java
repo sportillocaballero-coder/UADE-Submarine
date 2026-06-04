@@ -25,6 +25,10 @@ public class CargaProfundidad {
         return posicion;
     }
 
+    public double getVelocidad() {
+        return velocidad;
+}
+
     public void caer() {
         posicion.mover(0, velocidad);
     }
@@ -75,6 +79,14 @@ public class CargaProfundidad {
     }
 
     public CargaView toView() {
-    return new CargaView(posicion.getX(), posicion.getY(),explotada, estaExplotando(), tiempoExplosion);
+        return new CargaView(posicion.getX(), posicion.getY(),explotada, estaExplotando(), tiempoExplosion);
     }
+
+    public int calcularDanio(Submarino sub) {
+        double dist = calcularDistancia(sub);
+        if (dist > 100) return 0;
+            if (dist > 50)  return 30;
+                if (dist > 10)  return 50;
+        return -1;
+}
 }

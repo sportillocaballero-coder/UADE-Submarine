@@ -42,22 +42,25 @@ public class Ventana extends JFrame {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT:  controlador.procesarEntrada("izquierda", 8); break;
-                    case KeyEvent.VK_RIGHT: controlador.procesarEntrada("derecha", 8);   break;
-                    case KeyEvent.VK_UP:    controlador.procesarEntrada("arriba", 8);    break;
-                    case KeyEvent.VK_DOWN:  controlador.procesarEntrada("abajo", 8);     break;
-                }
+                if (!controlador.getJugadorView().isJuegoActivo()) return;
+                    switch (e.getKeyCode()) {
+                            case KeyEvent.VK_LEFT:  controlador.procesarEntrada("izquierda", 8); break;
+                            case KeyEvent.VK_RIGHT: controlador.procesarEntrada("derecha", 8);   break;
+                            case KeyEvent.VK_UP:    controlador.procesarEntrada("arriba", 8);    break;
+                            case KeyEvent.VK_DOWN:  controlador.procesarEntrada("abajo", 8);     break;
+                        }
             }
         });
 
         Timer gameLoop = new Timer(30, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!controlador.getJugadorView().isJuegoActivo()) return;
                 controlador.ejecutarCiclo();
                 panel.repaint();
             }
         });
+        
         gameLoop.start();
 
         this.setVisible(true);
