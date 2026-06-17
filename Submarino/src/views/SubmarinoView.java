@@ -22,4 +22,19 @@ public class SubmarinoView {
 
     public int getVida() { return vida; }
     public void setVida(int vida) { this.vida = vida; }
+
+    @Override
+    public String toString() {
+        return "Submarino [x=" + x + ", y=" + y + ", vida=" + vida + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        SubmarinoView otro = (SubmarinoView) obj;
+        return Double.compare(x, otro.x) == 0
+            && Double.compare(y, otro.y) == 0
+            && vida == otro.vida;
+    }
 }

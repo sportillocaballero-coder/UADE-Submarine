@@ -3,6 +3,7 @@ package modelo;
 import views.JugadorView;
 
 // Jugador humano: nombre, puntaje, vidas y su submarino.
+// Responsable de todas las operaciones sobre su submarino.
 public class Jugador {
 
     private String nombreClave;
@@ -34,6 +35,41 @@ public class Jugador {
 
     public void setSubmarino(Submarino sub) {
         this.sub = sub;
+    }
+
+    // ========== RESPONSABILIDAD: Mover el submarino ==========
+    public void moverSubmarino(String accion, double valor) {
+        switch (accion) {
+            case "izquierda": sub.mover(-valor, 0); break;
+            case "derecha":   sub.mover(valor, 0);  break;
+            case "arriba":    sub.mover(0, -valor);  break;
+            case "abajo":     sub.mover(0, valor);   break;
+        }
+    }
+
+    // Corrige si el submarino salió del área de agua (delegado por Juego)
+    public void aplicarLimitesSubmarino(double xMin, double xMax, double yMin, double yMax) {
+        Punto pos = sub.getPosicion();
+        double cx = Math.max(xMin, Math.min(pos.getX(), xMax)) - pos.getX();
+        double cy = Math.max(yMin, Math.min(pos.getY(), yMax)) - pos.getY();
+        if (cx != 0 || cy != 0) {
+            sub.mover(cx, cy);
+        }
+    }
+
+    // ========== RESPONSABILIDAD: Reiniciar el submarino cuando muere ==========
+    public void reiniciarSubmarino(Punto nuevaPosicion) {
+        sub.reiniciar(nuevaPosicion);
+    }
+
+    // ========== RESPONSABILIDAD: Recibir daño en el submarino ==========
+    public void recibirDanoEnSubmarino(int danio) {
+        sub.recibirDanio(danio);
+    }
+
+    // ¿El submarino sigue activo?
+    public boolean isSubmarinoActivo() {
+        return sub.estaActivo();
     }
 
     /**

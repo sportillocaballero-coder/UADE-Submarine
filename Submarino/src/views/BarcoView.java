@@ -27,4 +27,19 @@ public class BarcoView {
 
     public List<CargaView> getCargas() { return cargas; }
     public void setCargas(List<CargaView> cargas) { this.cargas = cargas; }
+
+    @Override
+    public String toString() {
+        return "Barco [x=" + x + ", y=" + y + ", cargas=" + cargas.size() + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        BarcoView otro = (BarcoView) obj;
+        return Double.compare(x, otro.x) == 0
+            && Double.compare(y, otro.y) == 0
+            && cargas.equals(otro.cargas);
+    }
 }

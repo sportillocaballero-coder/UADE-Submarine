@@ -24,13 +24,20 @@ public class Submarino {
         posicion.mover(0, metro);
     }
 
-    // El daño es una cantidad fija de puntos (sobre 100 de vida máxima).
+    // Mantiene su propia lógica de daño
     public void recibirDanio(int puntos) {
         vidaActual -= puntos;
         if (vidaActual <= 0) {
             vidaActual = 0;
             activo = false;
         }
+    }
+
+    // Reinicia el submarino (delegado desde Jugador cuando muere)
+    public void reiniciar(Punto nuevaPosicion) {
+        this.vidaActual = 100;
+        this.activo = true;
+        this.posicion = nuevaPosicion;
     }
 
     public boolean estaActivo() {

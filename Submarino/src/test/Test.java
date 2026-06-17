@@ -9,6 +9,8 @@ import modelo.Jugador;
 import modelo.Submarino;
 import modelo.Punto;
 import modelo.CargaProfundidad;
+import views.SubmarinoView;
+import views.JugadorView;
 
 public class Test {
 
@@ -31,6 +33,8 @@ public class Test {
         testSerieFinaliza12Barcos();
         testProfundidadDetonacionAleatoria();
         testVelocidadAumentaPorNivel();
+        testSingletonJuego();
+        testViewToStringYEquals();
 
         System.out.println("====================================");
         System.out.println("  Resultados: " + exitos + " OK  |  " + fallos + " FALLOS");
@@ -77,7 +81,7 @@ public class Test {
         // Carga lejos del submarino (más de 100px de distancia)
         CargaProfundidad carga = new CargaProfundidad(new Punto(0, 0), 3.0);
         sub.getPosicion().mover(200, 200); // asegura distancia > 100
-        ctrl.aplicarEfectoExplosion(carga);
+        ctrl.getJuego().aplicarEfectoExplosion(carga);
 
         verificar("Suma 30 puntos", j.getPuntaje() == puntajeAntes + 30);
         verificar("No recibe daño", sub.getVidaActual() == vidaAntes);
@@ -98,7 +102,7 @@ public class Test {
         );
         int puntajeAntes = j.getPuntaje();
         int vidaAntes = sub.getVidaActual();
-        ctrl.aplicarEfectoExplosion(carga);
+        ctrl.getJuego().aplicarEfectoExplosion(carga);
 
         verificar("Suma 10 puntos", j.getPuntaje() == puntajeAntes + 10);
         verificar("Vida baja 30%", sub.getVidaActual() == vidaAntes - 30);
@@ -119,7 +123,7 @@ public class Test {
         );
         int puntajeAntes = j.getPuntaje();
         int vidaAntes = sub.getVidaActual();
-        ctrl.aplicarEfectoExplosion(carga);
+        ctrl.getJuego().aplicarEfectoExplosion(carga);
 
         verificar("No suma puntos", j.getPuntaje() == puntajeAntes);
         verificar("Vida baja 50%", sub.getVidaActual() == vidaAntes - 50);
@@ -139,7 +143,7 @@ public class Test {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posSub.getX() + 2, posSub.getY()), 3.0
         );
-        ctrl.aplicarEfectoExplosion(carga);
+        ctrl.getJuego().aplicarEfectoExplosion(carga);
 
         verificar("Pierde 1 vida", j.getVidas() == vidasAntes - 1);
         System.out.println();
@@ -151,7 +155,7 @@ public class Test {
         ctrl.iniciarJuego("TestPlayer");
         Jugador j = ctrl.getJuego().getJugadorActual();
         int puntajeAntes = j.getPuntaje();
-        ctrl.verificarCambioNivel(); // no hace nada, serie no terminó
+        ctrl.getJuego().verificarCambioNivel(); // no hace nada, serie no terminó
         // Forzamos el cambio de nivel sumando puntos manualmente
         j.sumarPuntaje(200);
         verificar("Al pasar nivel suma 200 puntos", j.getPuntaje() == puntajeAntes + 200);
@@ -220,6 +224,47 @@ public class Test {
 
         double esperada = velNivel1 * 1.2;
         verificar("Velocidad nivel 2 es 20% mayor", Math.abs(velNivel2 - esperada) < 0.001);
+        System.out.println();
+    }
+
+    // ========== TEST PATRÓN SINGLETON ==========
+    static void testSingletonJuego() {
+        System.out.println("[ Patron Singleton: una unica instancia de Juego ]");
+
+        // Iniciar dos veces y verificar que getInstance devuelve la última
+        Juego.iniciar("Jugador1");
+        Juego instancia1 = Juego.getInstance();
+        Juego instancia2 = Juego.getInstance();
+
+        // getInstance siempre devuelve la misma referencia
+        verificar("getInstance devuelve la misma instancia", instancia1 == instancia2);
+
+        // Al iniciar de nuevo, se reemplaza la instancia
+        Juego.iniciar("Jugador2");
+        Juego instancia3 = Juego.getInstance();
+        verificar("Iniciar de nuevo reemplaza la instancia", instancia1 != instancia3);
+        System.out.println();
+    }
+
+    // ========== TEST PATRÓN VIEW (toString y equals) ==========
+    static void testViewToStringYEquals() {
+        System.out.println("[ Patron View: toString y equals ]");
+
+        // Dos vistas con los mismos datos deben ser iguales
+        SubmarinoView v1 = new SubmarinoView(100, 200, 80);
+        SubmarinoView v2 = new SubmarinoView(100, 200, 80);
+        SubmarinoView v3 = new SubmarinoView(100, 200, 50);
+
+        verificar("Dos SubmarinoView iguales son equals", v1.equals(v2));
+        verificar("SubmarinoView con distinta vida NO son equals", !v1.equals(v3));
+
+        // toString no debe ser nulo y debe contener datos
+        verificar("toString contiene la vida", v1.toString().contains("80"));
+
+        // JugadorView equals
+        JugadorView j1 = new JugadorView(3, 500, 1, true);
+        JugadorView j2 = new JugadorView(3, 500, 1, true);
+        verificar("Dos JugadorView iguales son equals", j1.equals(j2));
         System.out.println();
     }
 }

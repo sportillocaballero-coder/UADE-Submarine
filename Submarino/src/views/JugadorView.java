@@ -27,4 +27,21 @@ public class JugadorView {
 
     public boolean isJuegoActivo() { return juegoActivo; }
     public void setJuegoActivo(boolean juegoActivo) { this.juegoActivo = juegoActivo; }
+
+    @Override
+    public String toString() {
+        return "Jugador [vidas=" + vidas + ", puntaje=" + puntaje
+             + ", nivel=" + nivel + ", juegoActivo=" + juegoActivo + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        JugadorView otro = (JugadorView) obj;
+        return vidas == otro.vidas
+            && puntaje == otro.puntaje
+            && nivel == otro.nivel
+            && juegoActivo == otro.juegoActivo;
+    }
 }
