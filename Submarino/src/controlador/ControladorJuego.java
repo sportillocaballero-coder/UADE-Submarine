@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import modelo.Juego;
 import modelo.Barco;
 
-// Controlador del juego: FACHADA que orquesta.
-// NO contiene lógica de juego, solo delega.
+
+
 public class ControladorJuego {
 
     private Juego juego;
@@ -23,18 +23,33 @@ public class ControladorJuego {
         juego.moverSubmarino(accion, valor);
     }
 
-    // Un ciclo completo del juego
+
     // La lógica está en Juego.ejecutarCiclo()
     public void ejecutarCiclo() {
         juego.ejecutarCiclo();
     }
 
-    // ========== OBTENER JUEGO ==========
+
     public Juego getJuego() {
         return juego;
     }
 
-    // ========== OBTENER VISTAS (para la GUI) ==========
+    // controld e estado pausar / reanudar
+    public void pausar() {
+        if (juego != null) juego.pausar();
+    }
+
+    public void reanudar() {
+        if (juego != null) juego.reanudar();
+    }
+
+    public void reiniciarJuego() {
+        if (juego == null) return;
+        String nombreJugador = juego.getJugadorActual().getNombreClave();
+        iniciarJuego(nombreJugador);
+    }
+
+    //Esto obtiene las vistas de la gui
     // Solo orquestan llamadas a toView()
     public SubmarinoView getSubmarinoView() {
         return juego.getJugadorActual().getSubmarino().toView();

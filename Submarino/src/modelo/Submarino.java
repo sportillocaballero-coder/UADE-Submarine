@@ -54,5 +54,5 @@ public class Submarino {
 
     public SubmarinoView toView(){
         return new SubmarinoView(posicion.getX(), posicion.getY(), vidaActual);
-    }
-}
+    
+}}

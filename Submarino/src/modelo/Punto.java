@@ -1,6 +1,6 @@
 package modelo;
 
-// Coordenada 2D usada por todos los objetos del juego.
+
 public class Punto {
 
     private double x;

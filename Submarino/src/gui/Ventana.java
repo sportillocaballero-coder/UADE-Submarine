@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -9,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -19,7 +21,7 @@ import views.CargaView;
 import views.JugadorView;
 import views.SubmarinoView;
 
-// Ventana principal del juego. Captura teclas y ejecuta el game-loop a 30 ms.
+// Ventana principal del juego. Captura teclas y ejecuta el game-loop a 30 ms
 public class Ventana extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -27,13 +29,27 @@ public class Ventana extends JFrame {
     private static final int ALTO = 600;
 
     private ControladorJuego controlador;
+    private JButton btnReiniciar;
 
     public Ventana(String nombreJugador) {
         controlador = new ControladorJuego();
         controlador.iniciarJuego(nombreJugador);
 
         PanelJuego panel = new PanelJuego();
-        this.add(panel);
+        btnReiniciar = new JButton("Empezar de nuevo");
+        btnReiniciar.setEnabled(false);
+        btnReiniciar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controlador.reiniciarJuego();
+                btnReiniciar.setEnabled(false);
+                panel.repaint();
+            }
+        });
+
+        this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
+        this.add(btnReiniciar, BorderLayout.SOUTH);
         this.setSize(ANCHO, ALTO);
         this.setTitle("Submarino - " + nombreJugador);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,20 +58,34 @@ public class Ventana extends JFrame {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                // Tecla P: pausar / reanudar independientemente del estado actual
+                if (e.getKeyCode() == KeyEvent.VK_P) {
+                    if (controlador.getJuego().isActivo()) controlador.pausar();
+                    else controlador.reanudar();
+                    return;
+                }
+
                 if (!controlador.getJugadorView().isJuegoActivo()) return;
-                    switch (e.getKeyCode()) {
-                            case KeyEvent.VK_LEFT:  controlador.procesarEntrada("izquierda", 8); break;
-                            case KeyEvent.VK_RIGHT: controlador.procesarEntrada("derecha", 8);   break;
-                            case KeyEvent.VK_UP:    controlador.procesarEntrada("arriba", 8);    break;
-                            case KeyEvent.VK_DOWN:  controlador.procesarEntrada("abajo", 8);     break;
-                        }
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT:  controlador.procesarEntrada("izquierda", 8); break;
+                    case KeyEvent.VK_RIGHT: controlador.procesarEntrada("derecha", 8);   break;
+                    case KeyEvent.VK_UP:    controlador.procesarEntrada("arriba", 8);    break;
+                    case KeyEvent.VK_DOWN:  controlador.procesarEntrada("abajo", 8);     break;
+                }
             }
         });
-
+        // ms
         Timer gameLoop = new Timer(30, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!controlador.getJugadorView().isJuegoActivo()) return;
+                boolean juegoActivo = controlador.getJugadorView().isJuegoActivo();
+                boolean jugadorVivo = controlador.getJuego().getJugadorActual().estaVivo();
+                btnReiniciar.setEnabled(!juegoActivo && !jugadorVivo);
+
+                if (!juegoActivo) {
+                    panel.repaint();
+                    return;
+                }
                 controlador.ejecutarCiclo();
                 panel.repaint();
             }
@@ -66,7 +96,7 @@ public class Ventana extends JFrame {
         this.setVisible(true);
     }
 
-    // Panel que dibuja todos los elementos del juego en cada repaint.
+    //Esto dibuja todos los elementos del juego
     class PanelJuego extends JPanel {
 
         private static final long serialVersionUID = 1L;
@@ -152,13 +182,26 @@ protected void paintComponent(Graphics g) {
     g.drawString("Puntaje: " + jugador.getPuntaje(), ANCHO - 130, 45);
     g.drawString("Nivel: " + jugador.getNivel(), ANCHO - 130, 65);
 
-    // Game over
+    // Pausa / Game over
     if (!jugador.isJuegoActivo()) {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, ANCHO, ALTO);
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 48));
-        g.drawString("GAME OVER", ANCHO / 2 - 140, ALTO / 2);
+        boolean jugadorVivo = controlador.getJuego().getJugadorActual().estaVivo();
+        if (!jugadorVivo) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString("GAME OVER", ANCHO / 2 - 140, ALTO / 2);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 24));
+            g.drawString("Usar boton de abajo que dice \"Empezar de nuevo\"", ANCHO / 2 - 275, ALTO / 2 + 50);
+        } else {
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString("PAUSADO", ANCHO / 2 - 110, ALTO / 2);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.drawString("Presioná P para reanudar", ANCHO / 2 - 120, ALTO / 2 + 50);
+        }
     }
 }
     }

@@ -2,7 +2,7 @@ package modelo;
 
 import views.CargaView;
 
-// Proyectil que cae verticalmente desde un barco enemigo.
+// El torpedo que cae verticalmente
 public class CargaProfundidad {
 
     private Punto posicion;
@@ -46,7 +46,7 @@ public class CargaProfundidad {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    // Marca la carga como explotada e inicia la animación de 25 frames.
+    //Marca la carga como explotada y inicia una animacion, el tiempoExplosion son los frames que dura la animacion  
     public void forzarExplosion() {
         if (!explotada) {
             explotada = true;
@@ -86,7 +86,7 @@ public class CargaProfundidad {
         double dist = calcularDistancia(sub);
         if (dist > 100) return 0;
             if (dist > 50)  return 30;
-                if (dist > 10)  return 50;
+                if (dist > 10)  return 50;           
         return -1;
 }
 }

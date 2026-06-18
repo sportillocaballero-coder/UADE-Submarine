@@ -2,8 +2,8 @@ package modelo;
 
 import views.JugadorView;
 
-// Jugador humano: nombre, puntaje, vidas y su submarino.
-// Responsable de todas las operaciones sobre su submarino.
+
+//Responsable del submarino
 public class Jugador {
 
     private String nombreClave;
@@ -37,7 +37,7 @@ public class Jugador {
         this.sub = sub;
     }
 
-    // ========== RESPONSABILIDAD: Mover el submarino ==========
+    //Esto tiene la responsabilidad de mover el submarino
     public void moverSubmarino(String accion, double valor) {
         switch (accion) {
             case "izquierda": sub.mover(-valor, 0); break;
@@ -57,17 +57,17 @@ public class Jugador {
         }
     }
 
-    // ========== RESPONSABILIDAD: Reiniciar el submarino cuando muere ==========
+    // Reinicia el submarino (delegado desde Juego cuando muere)
     public void reiniciarSubmarino(Punto nuevaPosicion) {
         sub.reiniciar(nuevaPosicion);
     }
 
-    // ========== RESPONSABILIDAD: Recibir daño en el submarino ==========
+    //recibe daño
     public void recibirDanoEnSubmarino(int danio) {
         sub.recibirDanio(danio);
     }
 
-    // ¿El submarino sigue activo?
+
     public boolean isSubmarinoActivo() {
         return sub.estaActivo();
     }

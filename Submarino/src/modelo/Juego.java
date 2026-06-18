@@ -2,10 +2,9 @@ package modelo;
 
 // Estado de la partida: nivel, jugador y serie de barcos actual.
 // Responsable de la lógica principal del juego.
-// Implementa el patrón Singleton: existe una única instancia del juego.
 public class Juego {
 
-    // ========== PATRÓN SINGLETON ==========
+    //La clase utiliza el patron singleton que permite que solo exista una instancia
     private static Juego instancia;
 
     private int nivelActual;
@@ -19,7 +18,7 @@ public class Juego {
     public static final double X_MIN = 0;
     public static final double X_MAX = 810;  // 900 - ancho del submarino (90)
     public static final double Y_MIN = 85;   // justo bajo la línea del mar
-    public static final double Y_MAX = 562;  // 600 - alto del submarino + barra (38)
+    public static final double Y_MAX = 540;  // 600 - alto del submarino + barra (38)
 
     // Constructor privado: nadie puede crear un Juego desde afuera.
     private Juego(String nombreJugador) {
@@ -49,7 +48,7 @@ public class Juego {
         return instancia;
     }
 
-    // ========== LÓGICA PRINCIPAL DEL JUEGO ==========
+    //logica del juego 
     public void ejecutarCiclo() {
         ciclos++;
 
@@ -162,12 +161,26 @@ public class Juego {
         }
     }
 
+    /**
+     * pausa la pantalla
+     */
+    public void pausar() {
+        activo = false;
+    }
+
+    /**
+     * reanuda la pantalla
+     */
+    public void reanudar() {
+        activo = true;
+    }
+
     public void moverSubmarino(String accion, double valor) {
         jugadorActual.moverSubmarino(accion, valor);
         jugadorActual.aplicarLimitesSubmarino(X_MIN, X_MAX, Y_MIN, Y_MAX);
     }
 
-    // ========== GETTERS ==========
+    // GETTERS
     public Jugador getJugadorActual() {
         return jugadorActual;
     }

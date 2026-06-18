@@ -2,12 +2,11 @@ package modelo;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import views.BarcoView;
 import views.CargaView;
 
 
-// Barco enemigo que cruza la pantalla lanzando cargas de profundidad.
+// Barco enemigo que cruza la pantalla lanzando cargas de profundidad que son como torpedos.
 public class Barco {
 
     private boolean activo;
@@ -60,13 +59,13 @@ public class Barco {
         return cooldownDisparo <= 0;
     }
 
-    // Cooldown de 120 ciclos entre disparos (~3,6 s a 30 fps).
+    // Cooldown aleatorio de 30 a 120 ciclos entre disparos (1 a 4 segundos)
     public CargaProfundidad lanzarCarga() {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posicion.getX() + 40, posicion.getY() + 30), velocidadCarga
         );
         cargas.add(carga);
-        cooldownDisparo = 120;
+        cooldownDisparo = 30 + Math.random() * 90; 
         return carga;
     }
 
