@@ -12,11 +12,12 @@ public class CargaProfundidad {
     // Ciclos restantes de animación de explosión (25 → 0).
     private int tiempoExplosion;
 
-    // Explota de manera aleatroria a una profundidad entre 500 y 600 metros.
+    // Explota de manera aleatoria a una profundidad entre 500 y 600 metros.
     public CargaProfundidad(Punto inicio, double velocidadCaida) {
         this.posicion = inicio;
         this.velocidad = velocidadCaida;
-        this.profundidadDetonacion = 500 + Math.random() * 100;
+        this.profundidadDetonacion = Juego.PROFUNDIDAD_DETONACION_MIN
+            + Math.random() * (Juego.PROFUNDIDAD_DETONACION_MAX - Juego.PROFUNDIDAD_DETONACION_MIN);
         this.explotada = false;
         this.tiempoExplosion = 0;
     }

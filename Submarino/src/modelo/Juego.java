@@ -20,6 +20,23 @@ public class Juego {
     public static final double Y_MIN = 85;   // justo bajo la línea del mar
     public static final double Y_MAX = 540;  // 600 - alto del submarino + barra (38)
 
+    public static final int CICLOS_GENERAR_BARCO = 80;
+    public static final int TOTAL_BARCOS_POR_SERIE = 12;
+    public static final int MAX_BARCO_SIMULTANEOS = 3;
+
+    public static final int VIDAS_INICIALES = 3;
+    public static final int VIDA_SUBMARINO_INICIAL = 100;
+    public static final int PUNTOS_PARA_VIDA_EXTRA = 500;
+
+    public static final int COOLDOWN_DISPARO_MIN = 30;
+    public static final int COOLDOWN_DISPARO_MAX = 120;
+
+    public static final int PROFUNDIDAD_DETONACION_MIN = 500;
+    public static final int PROFUNDIDAD_DETONACION_MAX = 600;
+
+    public static final int ANCHO_PANTALLA = 900;
+    public static final int BORDE_OFFSCREEN = 80;
+
     // Constructor privado: nadie puede crear un Juego desde afuera.
     private Juego(String nombreJugador) {
         this.nivelActual = 1;
@@ -28,7 +45,13 @@ public class Juego {
         this.ciclos = 0;
         this.jugadorActual = new Jugador(nombreJugador);
         jugadorActual.setSubmarino(new Submarino(new Punto(400, 350)));
-        this.serieActual = new SerieDeBarcos(12, 3, calcularVelocidad(), generarDireccion(), calcularVelocidadCarga());
+        this.serieActual = new SerieDeBarcos(
+            TOTAL_BARCOS_POR_SERIE,
+            MAX_BARCO_SIMULTANEOS,
+            calcularVelocidad(),
+            generarDireccion(),
+            calcularVelocidadCarga()
+        );
     }
 
     /**
@@ -52,40 +75,7 @@ public class Juego {
     public void ejecutarCiclo() {
         ciclos++;
 
-        // Genera nuevos barcos cada 80 ciclos
-        if (ciclos % 80 == 0 && serieActual.puedeLanzarNuevoBarco()) {
-            serieActual.generarBarco();
-        }
-
-        // Procesa todos los barcos y sus cargas
-        for (Barco b : serieActual.getBarcosActivos()) {
-            b.avanzar();
-            b.actualizar();
-            
-            if (b.puedeLanzar()) {
-                b.lanzarCarga();
-            }
-            
-            // Procesa cada carga de profundidad
-            for (CargaProfundidad c : b.getCargas()) {
-                if (!c.estaExplotada()) {
-                    c.caer();
-                    Submarino sub = jugadorActual.getSubmarino();
-
-                    double cargaY = c.getPosicion().getY();
-                    double subY = sub.getPosicion().getY();
-                    boolean alcanzoProfundidad = cargaY >= subY && (cargaY - c.getVelocidad()) < subY;
-                    
-                    if (alcanzoProfundidad || c.explotar()) {
-                        c.forzarExplosion();
-                        // Delega efectos de explosión
-                        aplicarEfectoExplosion(c);
-                    }
-                } else if (c.estaExplotando()) {
-                    c.actualizarExplosion();
-                }
-            }
-        }
+        serieActual.procesarCiclo(ciclos, jugadorActual.getSubmarino(), c -> aplicarEfectoExplosion(c));
 
         // Actualiza la serie (elimina barcos inactivos)
         actualizarJuego();
@@ -151,7 +141,13 @@ public class Juego {
 
     public void subirNivel() {
         nivelActual++;
-        serieActual = new SerieDeBarcos(12, 3, calcularVelocidad(), generarDireccion(), calcularVelocidadCarga());
+        serieActual = new SerieDeBarcos(
+            TOTAL_BARCOS_POR_SERIE,
+            MAX_BARCO_SIMULTANEOS,
+            calcularVelocidad(),
+            generarDireccion(),
+            calcularVelocidadCarga()
+        );
     }
 
     public void cerrarJuego() {

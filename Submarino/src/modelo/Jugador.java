@@ -13,11 +13,11 @@ public class Jugador {
     // Último umbral de 500 puntos por el que ya se otorgó una vida extra.
     private int puntajeUltimaVida;
 
-    // Empieza con 0 puntos y 3 vidas.
+    // Empieza con 0 puntos y vidas iniciales configuradas.
     public Jugador(String nombre) {
         this.nombreClave = nombre;
         this.puntaje = 0;
-        this.vidas = 3;
+        this.vidas = Juego.VIDAS_INICIALES;
         this.puntajeUltimaVida = 0;
     }
 
@@ -79,8 +79,8 @@ public class Jugador {
      */
     public boolean verificaVidaExtra() {
         boolean gano = false;
-        while (puntaje >= puntajeUltimaVida + 500) {
-            puntajeUltimaVida += 500;
+        while (puntaje >= puntajeUltimaVida + Juego.PUNTOS_PARA_VIDA_EXTRA) {
+            puntajeUltimaVida += Juego.PUNTOS_PARA_VIDA_EXTRA;
             vidas++;
             gano = true;
         }

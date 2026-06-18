@@ -9,10 +9,10 @@ public class Submarino {
     private boolean activo;
     private Punto posicion;
 
-    // Comienza con 100 de vida.
+    // Comienza con la vida configurada.
     public Submarino(Punto inicio) {
         this.posicion = inicio;
-        this.vidaActual = 100;
+        this.vidaActual = Juego.VIDA_SUBMARINO_INICIAL;
         this.activo = true;
     }
 
@@ -35,13 +35,19 @@ public class Submarino {
 
     // Reinicia el submarino (delegado desde Jugador cuando muere)
     public void reiniciar(Punto nuevaPosicion) {
-        this.vidaActual = 100;
+        this.vidaActual = Juego.VIDA_SUBMARINO_INICIAL;
         this.activo = true;
         this.posicion = nuevaPosicion;
     }
 
     public boolean estaActivo() {
         return activo;
+    }
+
+    public boolean impactadoPor(CargaProfundidad carga) {
+        double cargaY = carga.getPosicion().getY();
+        double subY = posicion.getY();
+        return cargaY >= subY && (cargaY - carga.getVelocidad()) < subY;
     }
 
     public Punto getPosicion() {

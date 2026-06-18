@@ -2,6 +2,7 @@ package modelo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 // Maneja la oleada de barcos enemigos de un nivel.
 public class SerieDeBarcos {
@@ -36,11 +37,11 @@ public class SerieDeBarcos {
         if (puedeLanzarNuevoBarco()) {
             double x;
             if (direccion.equals("derecha")) {
-                x = -(Math.random() * 300 + 80);   // fuera del borde izquierdo
+                x = -(Math.random() * 300 + Juego.BORDE_OFFSCREEN);   // fuera del borde izquierdo
             } else {
-                x = 900 + Math.random() * 300 + 80; // fuera del borde derecho
+                x = Juego.ANCHO_PANTALLA + Math.random() * 300 + Juego.BORDE_OFFSCREEN; // fuera del borde derecho
             }
-            Barco nuevo = new Barco(new Punto(x, 30), velocidad, direccion,velocidadCarga);
+            Barco nuevo = new Barco(new Punto(x, 30), velocidad, direccion, velocidadCarga);
             barcosActivos.add(nuevo);
             barcosGenerados++;
         }
@@ -48,6 +49,33 @@ public class SerieDeBarcos {
 
     public void actualizarSerie() {
         barcosActivos.removeIf(b -> !b.isActivo());
+    }
+
+    public void procesarCiclo(int ciclos, Submarino sub, Consumer<CargaProfundidad> efectoExplosion) {
+        if (ciclos % Juego.CICLOS_GENERAR_BARCO == 0 && puedeLanzarNuevoBarco()) {
+            generarBarco();
+        }
+
+        for (Barco b : barcosActivos) {
+            b.avanzar();
+            b.actualizar();
+
+            if (b.puedeLanzar()) {
+                b.lanzarCarga();
+            }
+
+            for (CargaProfundidad c : b.getCargas()) {
+                if (!c.estaExplotada()) {
+                    c.caer();
+                    if (sub.impactadoPor(c) || c.explotar()) {
+                        c.forzarExplosion();
+                        efectoExplosion.accept(c);
+                    }
+                } else if (c.estaExplotando()) {
+                    c.actualizarExplosion();
+                }
+            }
+        }
     }
 
     // La serie termina cuando se generaron todos los barcos y ninguno sigue activo.

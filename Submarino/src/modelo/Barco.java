@@ -48,8 +48,8 @@ public class Barco {
         }
         // Se desactiva al salir por el lado contrario al que entró
         boolean salio = direccion.equals("derecha")
-                ? posicion.getX() > 900
-                : posicion.getX() < -80;
+            ? posicion.getX() > Juego.ANCHO_PANTALLA
+            : posicion.getX() < -Juego.BORDE_OFFSCREEN;
         if (salio) {
             activo = false;
         }
@@ -59,14 +59,18 @@ public class Barco {
         return cooldownDisparo <= 0;
     }
 
-    // Cooldown aleatorio de 30 a 120 ciclos entre disparos (1 a 4 segundos)
+    // Cooldown aleatorio entre disparos.
     public CargaProfundidad lanzarCarga() {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posicion.getX() + 40, posicion.getY() + 30), velocidadCarga
         );
         cargas.add(carga);
-        cooldownDisparo = 30 + Math.random() * 90; 
+        cooldownDisparo = Juego.COOLDOWN_DISPARO_MIN + Math.random() * (Juego.COOLDOWN_DISPARO_MAX - Juego.COOLDOWN_DISPARO_MIN);
         return carga;
+    }
+
+    public boolean estaActivo() {
+        return activo;
     }
 
     public boolean isActivo() {
