@@ -31,19 +31,41 @@ public class Ventana extends JFrame {
     private ControladorJuego controlador;
     private JButton btnReiniciar;
 
+    // ===== PLUS VISUALES =====
+    // Récord de la sesión
+    private int record = 0;
+    // Burbujas de fondo (cada una: x, y, radio, velocidad)
+    private double[][] burbujas;
+    // Cartel de "Nivel X" al subir de nivel
+    private int nivelAnterior = 1;
+    private int mostrarCartelNivel = 0;  // frames restantes para mostrar el cartel
+
     public Ventana(String nombreJugador) {
         controlador = new ControladorJuego();
         controlador.iniciarJuego(nombreJugador);
 
+        // Inicializar 25 burbujas en posiciones y tamaños aleatorios
+        burbujas = new double[25][4];
+        for (int i = 0; i < burbujas.length; i++) {
+            burbujas[i][0] = Math.random() * ANCHO;          // x
+            burbujas[i][1] = 80 + Math.random() * (ALTO - 80); // y (solo en el agua)
+            burbujas[i][2] = 2 + Math.random() * 6;          // radio
+            burbujas[i][3] = 0.3 + Math.random() * 1.2;      // velocidad de subida
+        }
+
         PanelJuego panel = new PanelJuego();
         btnReiniciar = new JButton("Empezar de nuevo");
         btnReiniciar.setEnabled(false);
+        // El botón no debe robar el foco del teclado, así las flechas siguen funcionando
+        btnReiniciar.setFocusable(false);
         btnReiniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 controlador.reiniciarJuego();
                 btnReiniciar.setEnabled(false);
                 panel.repaint();
+                // Devolver el foco a la ventana para recuperar el control por teclado
+                requestFocusInWindow();
             }
         });
 
@@ -60,7 +82,7 @@ public class Ventana extends JFrame {
             public void keyPressed(KeyEvent e) {
                 // Tecla P: pausar / reanudar independientemente del estado actual
                 if (e.getKeyCode() == KeyEvent.VK_P) {
-                    if (controlador.getJuego().isActivo()) controlador.pausar();
+                    if (controlador.isJuegoActivo()) controlador.pausar();
                     else controlador.reanudar();
                     return;
                 }
@@ -79,7 +101,7 @@ public class Ventana extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean juegoActivo = controlador.getJugadorView().isJuegoActivo();
-                boolean jugadorVivo = controlador.getJuego().getJugadorActual().estaVivo();
+                boolean jugadorVivo = controlador.isJugadorVivo();
                 btnReiniciar.setEnabled(!juegoActivo && !jugadorVivo);
 
                 if (!juegoActivo) {
@@ -87,6 +109,27 @@ public class Ventana extends JFrame {
                     return;
                 }
                 controlador.ejecutarCiclo();
+
+                // ===== PLUS: actualizar efectos visuales =====
+                // Mover burbujas hacia arriba; al salir, reaparecen abajo
+                for (int i = 0; i < burbujas.length; i++) {
+                    burbujas[i][1] -= burbujas[i][3];
+                    if (burbujas[i][1] < 80) {
+                        burbujas[i][1] = ALTO;
+                        burbujas[i][0] = Math.random() * ANCHO;
+                    }
+                }
+                // Actualizar récord
+                int puntajeActual = controlador.getJugadorView().getPuntaje();
+                if (puntajeActual > record) record = puntajeActual;
+                // Detectar cambio de nivel para mostrar el cartel
+                int nivelActual = controlador.getJugadorView().getNivel();
+                if (nivelActual > nivelAnterior) {
+                    mostrarCartelNivel = 60;  // ~2 segundos a 30ms
+                    nivelAnterior = nivelActual;
+                }
+                if (mostrarCartelNivel > 0) mostrarCartelNivel--;
+
                 panel.repaint();
             }
         });
@@ -94,6 +137,9 @@ public class Ventana extends JFrame {
         gameLoop.start();
 
         this.setVisible(true);
+        // Asegura que la ventana tenga el foco del teclado al iniciar
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
 
     //Esto dibuja todos los elementos del juego
@@ -116,6 +162,15 @@ protected void paintComponent(Graphics g) {
     // Linea del mar
     g.setColor(new Color(0, 120, 200));
     g.fillRect(0, 75, ANCHO, 10);
+
+    // ===== PLUS: burbujas de fondo =====
+    if (burbujas != null) {
+        g.setColor(new Color(255, 255, 255, 60));
+        for (double[] b : burbujas) {
+            int r = (int) b[2];
+            g.drawOval((int) b[0], (int) b[1], r * 2, r * 2);
+        }
+    }
 
     // Barcos y cargas usando Views
     List<BarcoView> barcos = controlador.getBarcosView();
@@ -181,12 +236,26 @@ protected void paintComponent(Graphics g) {
     g.drawString("Vidas: " + jugador.getVidas(), ANCHO - 130, 25);
     g.drawString("Puntaje: " + jugador.getPuntaje(), ANCHO - 130, 45);
     g.drawString("Nivel: " + jugador.getNivel(), ANCHO - 130, 65);
+    // ===== PLUS: récord de la sesión =====
+    g.setColor(Color.YELLOW);
+    g.drawString("Récord: " + record, ANCHO - 130, 85);
+
+    // ===== PLUS: cartel de "Nivel X" al subir de nivel =====
+    if (mostrarCartelNivel > 0) {
+        // Se desvanece suavemente sobre el final
+        int alpha = Math.min(255, mostrarCartelNivel * 6);
+        g.setColor(new Color(255, 255, 255, alpha));
+        g.setFont(new Font("Arial", Font.BOLD, 56));
+        String texto = "¡NIVEL " + jugador.getNivel() + "!";
+        int ancho = g.getFontMetrics().stringWidth(texto);
+        g.drawString(texto, (ANCHO - ancho) / 2, ALTO / 2 - 60);
+    }
 
     // Pausa / Game over
     if (!jugador.isJuegoActivo()) {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, ANCHO, ALTO);
-        boolean jugadorVivo = controlador.getJuego().getJugadorActual().estaVivo();
+        boolean jugadorVivo = controlador.isJugadorVivo();
         if (!jugadorVivo) {
             g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, 48));

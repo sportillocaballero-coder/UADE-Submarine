@@ -73,7 +73,7 @@ public class Test {
         System.out.println("[ Explosion a mas de 100m: +30 puntos, sin daño ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Jugador j = ctrl.getJuego().getJugadorActual();
+        Jugador j = Juego.getInstance().getJugadorActual();
         Submarino sub = j.getSubmarino();
         int puntajeAntes = j.getPuntaje();
         int vidaAntes = sub.getVidaActual();
@@ -81,7 +81,7 @@ public class Test {
         // Carga lejos del submarino (más de 100px de distancia)
         CargaProfundidad carga = new CargaProfundidad(new Punto(0, 0), 3.0);
         sub.getPosicion().mover(200, 200); // asegura distancia > 100
-        ctrl.getJuego().aplicarEfectoExplosion(carga);
+        Juego.getInstance().aplicarEfectoExplosion(carga);
 
         verificar("Suma 30 puntos", j.getPuntaje() == puntajeAntes + 30);
         verificar("No recibe daño", sub.getVidaActual() == vidaAntes);
@@ -92,7 +92,7 @@ public class Test {
         System.out.println("[ Explosion entre 50 y 100m: +10 puntos, -30% vida ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Jugador j = ctrl.getJuego().getJugadorActual();
+        Jugador j = Juego.getInstance().getJugadorActual();
         Submarino sub = j.getSubmarino();
 
         // Posicionar carga a ~75px del submarino
@@ -102,7 +102,7 @@ public class Test {
         );
         int puntajeAntes = j.getPuntaje();
         int vidaAntes = sub.getVidaActual();
-        ctrl.getJuego().aplicarEfectoExplosion(carga);
+        Juego.getInstance().aplicarEfectoExplosion(carga);
 
         verificar("Suma 10 puntos", j.getPuntaje() == puntajeAntes + 10);
         verificar("Vida baja 30%", sub.getVidaActual() == vidaAntes - 30);
@@ -113,7 +113,7 @@ public class Test {
         System.out.println("[ Explosion entre 10 y 50m: 0 puntos, -50% vida ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Jugador j = ctrl.getJuego().getJugadorActual();
+        Jugador j = Juego.getInstance().getJugadorActual();
         Submarino sub = j.getSubmarino();
 
         // Posicionar carga a ~30px del submarino
@@ -123,7 +123,7 @@ public class Test {
         );
         int puntajeAntes = j.getPuntaje();
         int vidaAntes = sub.getVidaActual();
-        ctrl.getJuego().aplicarEfectoExplosion(carga);
+        Juego.getInstance().aplicarEfectoExplosion(carga);
 
         verificar("No suma puntos", j.getPuntaje() == puntajeAntes);
         verificar("Vida baja 50%", sub.getVidaActual() == vidaAntes - 50);
@@ -134,7 +134,7 @@ public class Test {
         System.out.println("[ Explosion a menos de 10m: pierde 1 vida ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Jugador j = ctrl.getJuego().getJugadorActual();
+        Jugador j = Juego.getInstance().getJugadorActual();
         Submarino sub = j.getSubmarino();
         int vidasAntes = j.getVidas();
 
@@ -143,7 +143,7 @@ public class Test {
         CargaProfundidad carga = new CargaProfundidad(
             new Punto(posSub.getX() + 2, posSub.getY()), 3.0
         );
-        ctrl.getJuego().aplicarEfectoExplosion(carga);
+        Juego.getInstance().aplicarEfectoExplosion(carga);
 
         verificar("Pierde 1 vida", j.getVidas() == vidasAntes - 1);
         System.out.println();
@@ -153,9 +153,9 @@ public class Test {
         System.out.println("[ Subir de nivel otorga 200 puntos ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Jugador j = ctrl.getJuego().getJugadorActual();
+        Jugador j = Juego.getInstance().getJugadorActual();
         int puntajeAntes = j.getPuntaje();
-        ctrl.getJuego().verificarCambioNivel(); // no hace nada, serie no terminó
+        Juego.getInstance().verificarCambioNivel(); // no hace nada, serie no terminó
         // Forzamos el cambio de nivel sumando puntos manualmente
         j.sumarPuntaje(200);
         verificar("Al pasar nivel suma 200 puntos", j.getPuntaje() == puntajeAntes + 200);
@@ -215,12 +215,11 @@ public class Test {
         System.out.println("[ Velocidad aumenta 20% por nivel ]");
         ControladorJuego ctrl = new ControladorJuego();
         ctrl.iniciarJuego("TestPlayer");
-        Juego juego = ctrl.getJuego();
-        double velNivel1 = juego.getSerieActual().getVelocidad();
+        double velNivel1 = Juego.getInstance().getSerieActual().getVelocidad();
 
         // Forzamos subida de nivel
-        juego.subirNivel();
-        double velNivel2 = juego.getSerieActual().getVelocidad();
+        Juego.getInstance().subirNivel();
+        double velNivel2 = Juego.getInstance().getSerieActual().getVelocidad();
 
         double esperada = velNivel1 * 1.2;
         verificar("Velocidad nivel 2 es 20% mayor", Math.abs(velNivel2 - esperada) < 0.001);

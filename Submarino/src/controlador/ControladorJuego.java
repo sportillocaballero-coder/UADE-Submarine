@@ -30,11 +30,16 @@ public class ControladorJuego {
     }
 
 
-    public Juego getJuego() {
-        return juego;
+    // Consultas de estado para la GUI (sin exponer el modelo)
+    public boolean isJuegoActivo() {
+        return juego != null && juego.isActivo();
     }
 
-    // controld e estado pausar / reanudar
+    public boolean isJugadorVivo() {
+        return juego != null && juego.getJugadorActual().estaVivo();
+    }
+
+    // control de estado pausar / reanudar / reiniciar
     public void pausar() {
         if (juego != null) juego.pausar();
     }
